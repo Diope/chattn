@@ -11,13 +11,13 @@
             <h3><i class="fas fa-user-friends"></i> Hear what people are talking about.</h3>
             <h3><i class="far fa-comment"></i> Join the conversation.</h3>
         </div>
-        <div class="col2" :class="{'signup-form' : !showLoginForm}">
+        <div class="col2" :class="{'signup-form' : !showLoginForm && !showForgotPassword}">
             <transition name="fade">
                 <div v-if="err_message !== ''" class="error-msg">
                     <p>{{err_message}}</p>
                 </div>
             </transition>
-            <form v-if="showLoginForm" @submit.prevent>
+            <form v-if="showLoginForm && !showForgotPassword" @submit.prevent>
                 <h1>Chattn</h1>
                 <p>Welcome Back!</p>
 
@@ -42,6 +42,26 @@
                 <button @click="signup" class="button">Sign Up</button>
                 <div class="extras"><a @click="toggleForm">Back to Log In</a></div>
             </form>
+            <form v-if="showForgotPassword" @submit.prevent class="password-reset">
+                <div v-if="!passwordResetSuccess">
+                    <h1>Reset Your Password</h1>
+                    <p>An link will be sent to your email to reset your password</p>
+
+                    <label for="email3">Email</label>
+                    <input type="text" v-model.trim="passwordForm.email" placeholder="example@email.com" id="email3">
+
+                    <button @click="resetPass" class="button">Submit</button>
+
+                    <div class="extras">
+                        <a @click="togglePasswordReset">Back to Log In</a>
+                    </div>
+                </div>
+                <div v-else>
+                    <h1>Email Sent</h1>
+                    <p>Check your email for password reset link</p>
+                    <button @click="togglePasswordReset" class="button">Back to Log In</button>
+                </div>
+            </form>
         </div>
         </section>
     </div>
@@ -62,7 +82,14 @@ export default {
                 email: '',
                 password: ''
             },
-            showLoginForm: true
+            passwordForm: {
+                email: ''
+            },
+            showLoginForm: true,
+            showForgotPassword: false,
+            passwordResetSuccess: false,
+            performingRequest: false,
+            err_message: ''
         }
     },
     methods: {
@@ -100,6 +127,21 @@ export default {
                 console.log(err);
                 this.performingRequest = false;
             })
+        },
+        resetPass() {
+            this.performingRequest = true
+
+            fb.auth.sendPasswordResetEmail(this.passwordForm.email)
+                .then(() => {
+                    this.performingRequest = false
+                    this.passwordResetSuccess = true
+                    this.passwordForm.email = ''
+                })
+                .catch((err) => {
+                    console.log(err)
+                    this.performingRequest = false
+                    this.err_message = err.message
+                })
         },
         toggleForm() {
             this.err_message
