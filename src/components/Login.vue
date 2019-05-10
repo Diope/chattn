@@ -21,6 +21,17 @@
                     <a>Create An Account</a>
                 </div>
             </form>
+            <form @submit.prevent>
+                <h1>Sign Up</h1>
+
+                <input v-model.trim="signupForm.handle" type="text" placeholder="Your Chattn handle" id="name" />
+                <input v-model.trim="signupForm.displayName" type="text" placeholder="Your display Name" id="name" />
+                <input v-model.trim="signupForm.email" type="email" placeholder="example@email.com" id="email2" />
+                <input v-model.trim="signupForm.password" type="password" placeholder="6 character minimum" id="password2" />
+
+                <button @click="signup" class="button">Sign Up</button>
+                <div class="extras"><a>Back to Log In</a></div>
+            </form>
         </div>
         </section>
     </div>
@@ -32,6 +43,12 @@ export default {
     data() {
         return {
             loginForm: {
+                email: '',
+                password: ''
+            },
+            signupForm: {
+                handle: '',
+                displayName: '',
                 email: '',
                 password: ''
             }
