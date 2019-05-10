@@ -1,5 +1,10 @@
 <template>
     <div id="login">
+        <transition name="fade">
+            <div v-if="performingRequest" class="loading">
+                <p>Loading...</p>
+            </div>
+        </transition>
         <section>
         <div class="col1">
             <h3><i class="fas fa-search"></i> Follow your interests.</h3>
@@ -7,6 +12,11 @@
             <h3><i class="far fa-comment"></i> Join the conversation.</h3>
         </div>
         <div class="col2" :class="{'signup-form' : !showLoginForm}">
+            <transition name="fade">
+                <div v-if="err_message !== ''" class="error-msg">
+                    <p>{{err_message}}</p>
+                </div>
+            </transition>
             <form v-if="showLoginForm" @submit.prevent>
                 <h1>Chattn</h1>
                 <p>Welcome Back!</p>
@@ -17,7 +27,7 @@
                 <button @click="login" class="button">Log In</button>
 
                 <div class="extras">
-                    <a>Forgot Password</a>
+                    <a @click="togglePasswordReset">Forgot Password</a>
                     <a @click="toggleForm">Create An Account</a>
                 </div>
             </form>
@@ -57,15 +67,23 @@ export default {
     },
     methods: {
         login() {
+            this.performingRequest = true;
+
             fb.auth.signInWithEmailAndPassword(this.loginForm.email, this.loginForm.password)
                 .then(user => {
                     this.commit('setCurrentUser', user.user)
                     this.$store.dispatch('fetchUserProfile')
+                    this.performingRequest = false
                     this.$router.push('/dashboard')
                 })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    console.log(err)
+                    this.performingRequest = false;
+                    this.err_message = err.message
+                })
         },
         signup() {
+            this.performingRequest = true
             fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(user => {
                 this.$store.commit('setCurrentUser', user.user)
 
@@ -75,11 +93,16 @@ export default {
                     displayName: this.signupForm.displayName
                 }).then(() => {
                     this.$store.dispatch('fetchUserProfile')
+                    this.performingRequest = false;
                     this.$router.push('/dashboard')
                 }).catch(err => console.log(err))
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                console.log(err);
+                this.performingRequest = false;
+            })
         },
         toggleForm() {
+            this.err_message
             this.showLoginForm = !this.showLoginForm
         }
     }
