@@ -1,18 +1,26 @@
 <template>
   <div id="app">
+    <Nav v-if="currentUser" />
     <router-view />
   </div>
 </template>
 
 <script>
-export default {
-  
-}
+    import {mapState} from 'vuex'
+    import Nav from './components/Nav'
+    export default {
+        components: {
+          Nav
+        },
+        computed: {
+          ...mapState(['currentUser'])
+        }
+    }
 </script>
 
 
 <style lang="scss">
-#app {
+/* #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -28,5 +36,5 @@ export default {
       color: #42b983;
     }
   }
-}
+} */
 </style>

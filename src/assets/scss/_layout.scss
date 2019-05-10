@@ -2,11 +2,11 @@
 header {
     position: relative;
     background: $white;
-    box-shadow: 0 0 5px 0 rgba($dark, 0.5);
     z-index: 10;
 
-    h3 {
+    .title {
         display: inline-block;
+        font-size: 1.4rem;
     }
 
     ul {
@@ -17,14 +17,14 @@ header {
             margin-top: 4px;
             margin-left: 6px;
             a {
-                display: block;
-                padding: 5px;
+                display: inline-block;
+                padding-right: 5px;
             }
         }
     }
 
     @media screen and (max-width: 742px) {
-        h3 {
+        .title {
             display: block;
             text-align: center;
         }

@@ -117,7 +117,8 @@ export default {
                 // creates the user object, kinda like what I'm doing on drybbble...though easier bc I'm using firebase
                 fb.userCollection.doc(user.user.uid).set({
                     handle: this.signupForm.handle,
-                    displayName: this.signupForm.displayName
+                    displayName: this.signupForm.displayName,
+                    email: this.signupForm.email
                 }).then(() => {
                     this.$store.dispatch('fetchUserProfile')
                     this.performingRequest = false;
