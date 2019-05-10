@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+import "./assets/scss/main.scss";
+
 const fb = require("./FirebaseConfig.js");
 
 Vue.config.productionTip = false;
