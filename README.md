@@ -1,5 +1,7 @@
 # chattn
 
+I've been messing with Vue on the side for fun, this is just a small CRUD project with Firebase backend to get better acquainted with Vue.
+
 ## Project setup
 ```
 yarn install
