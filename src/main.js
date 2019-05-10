@@ -9,6 +9,7 @@ Vue.config.productionTip = false;
 
 let app;
 
+// eslint-disable-next-line no-unused-vars
 fb.auth.onAuthStateChanged(user => {
 	if (!app) {
 		app = new Vue({
