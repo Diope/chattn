@@ -7,23 +7,71 @@ Vue.use(Vuex);
 
 fb.auth.onAuthStateChanged(user => {
   if (user) {
+    // user should be signed in
     store.commit("setCurrentUser", user);
     store.dispatch("fetchUserProfile");
+
+    // grab posts from post collection
+    fb.postCollection.orderBy("createdOn", "desc").onSnapshot(posts => {
+      let currentUserPosts;
+
+      if (posts.docs.length) {
+        // console.log(store.state.currentUser.uid);
+        // console.log(posts.docChanges()[0].doc.data().userId);
+        currentUserPosts =
+          store.state.currentUser.uid ===
+          posts.docChanges()[0].doc.data().userId
+            ? true
+            : false;
+      }
+
+      // add new posts to hiddenPost array after first load
+
+      // console.log(posts.docChanges()[0].doc.data());
+      // console.log(currentUserPosts);
+
+      // console.log(
+      //   posts.docChanges().length !== posts.size &&
+      //     posts.docChanges()[0].type === "added" &&
+      //     currentUserPosts
+      // );
+
+      // Okay so the idea is that the feed updates posts for the user but for other users they have to hit the "see new tweets" button just like on twitter.
+      if (
+        posts.docChanges().length !== posts.size &&
+        posts.docChanges()[0].type === "added" &&
+        !currentUserPosts
+      ) {
+        console.log("Yatta");
+
+        let hidPost = posts.docChanges()[0].doc.data();
+        hidPost.id = posts.docChanges()[0].doc.id;
+        // console.log("hidPost data", hidPost, "hidPost id", hidPost.id);
+        // const hiddenPost = posts.docChanges()[0].doc.data();
+        // hiddenPost.id = posts.docChanges()[0].doc.id;
+        store.commit("setHiddenPosts", hidPost);
+
+        // store.commit("setHiddenPosts", hiddenPost);
+      } else {
+        const postsArray = [];
+
+        posts.forEach(doc => {
+          const post = doc.data();
+          post.id = doc.id;
+          postsArray.push(post);
+        });
+        store.commit("setPosts", postsArray);
+      }
+    });
   }
 });
 
 export const store = new Vuex.Store({
   state: {
     currentUser: null,
-    userProfile: {}
-  },
-  mutations: {
-    setCurrentUser(state, value) {
-      state.currentUser = value;
-    },
-    setUserProfile(state, value) {
-      state.userProfile = value;
-    }
+    userProfile: {},
+    posts: [],
+    hiddenPosts: []
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -39,6 +87,28 @@ export const store = new Vuex.Store({
     clearData({ commit }) {
       commit("setCurrentUser", null);
       commit("setUserProfile", {});
+      commit("setPosts");
+    }
+  },
+  mutations: {
+    setCurrentUser(state, value) {
+      state.currentUser = value;
+    },
+    setUserProfile(state, value) {
+      state.userProfile = value;
+    },
+    setPosts(state, value) {
+      state.posts = value;
+    },
+    setHiddenPosts(state, value) {
+      if (value) {
+        // console.log((!state.hiddenPosts.some(post => post.id === value.id))
+        if (!state.hiddenPosts.some(post => post.id === value.id)) {
+          state.hiddenPosts.unshift(value);
+        }
+      } else {
+        state.hiddenPosts = [];
+      }
     }
   }
 });

@@ -147,6 +147,16 @@ export default {
         toggleForm() {
             this.err_message
             this.showLoginForm = !this.showLoginForm
+        },
+        togglePasswordReset() {
+            if (this.showForgotPassword) {
+                this.showLoginForm = true
+                this.showForgotPassword = false
+                this.passwordResetSuccess = false
+            } else {
+                this.showLoginForm = false
+                this.showForgotPassword = true
+            }
         }
     }
     
