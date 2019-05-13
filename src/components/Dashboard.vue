@@ -27,7 +27,7 @@
                         <span>{{post.createdOn | formatDate }}</span>
                         <p>{{post.content }}</p>
                         <ul>
-                            <li><a><i class="fas fa-comment"></i> {{post.comments}}</a></li>
+                            <li><a @click="toggleComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
                             <li><a><i class="fas fa-heart"></i> {{post.likes}}</a></li>
                             <li><a>View full post</a></li>
                         </ul>
@@ -38,6 +38,19 @@
                 </div>
             </div>
         </section>
+        <transition class="fade">
+            <div v-if="toggleComments" class="c-modal">
+                <div class="c-container">
+                    <a @click="closeComments">X</a>
+                    <p>Add a Comment</p>
+                    <form @submit.prevent>
+                        <textarea cols="30" rows="10" v-model="comment.content"></textarea>
+                        <button @click="addComment" :disabled="comment.content === ''">Add Comment</button>
+                    </form>
+                </div>
+            </div>
+        </transition>
+
     </div>
 </template>
 
@@ -52,7 +65,14 @@
             return {
                 post: {
                     content: ''
-                }
+                },
+                comment: {
+                    postCommentCount: 0,
+                    postId: '',
+                    userId: '',
+                    content: ''
+                },
+                toggleComments: false
             }
         },
         methods: {
@@ -75,6 +95,39 @@
                 const updatedPosts = this.hiddenPosts.concat(this.posts)
                 this.$store.commit('setHiddenPosts', null)
                 this.$store.commit('setPosts', updatedPosts)
+            },
+            toggleComments(post) {
+                this.comment.postId = post.id
+                this.comment.userId = post.userId
+                this.comment.postCommentCount = post.comments
+                this.toggleComments = true;
+            },
+            closeComments() {
+                this.comment.postId = ''
+                this.comment.userId = ''
+                this.comment.content = ''
+                this.toggleComments = false;
+            },
+            addComment() {
+                const postId = this.comment.postId
+                const postCommentCount = this.comment.postCommentCount
+
+                fb.commentsCollection.add({
+                    postId: postId,
+                    content: this.comment.content,
+                    userId: this.currentUser.uid,
+                    handle: this.userProfile.handle,
+                    displayName: this.userProfile.displayName,
+                    createdOn: new Date()
+                }).then(doc => {
+                    fb.postCollection.doc(postId).update({
+                        comments: postCommentCount + 1
+                    }).then(() => {
+                        this.closeComments()
+                    })
+                }).catch(err => {
+                    console.log(err)
+                })
             }
 
         },
