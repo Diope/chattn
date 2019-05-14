@@ -25,11 +25,10 @@
                     <div :key="post.id" v-for="post in posts" class="post" >
                         <div class="userDisplay"><span class="displayName">{{post.displayName}}</span><p>{{'@' + post.handle}}</p></div>
                         <span>{{post.createdOn | formatDate }}</span>
-                        <p>{{post.content }}</p>
+                        <p @click="viewPosts(post)">{{post.content }}</p>
                         <ul>
-                            <li><a @click="toggleComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
+                            <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
                             <li><a><i class="fas fa-heart"></i> {{post.likes}}</a></li>
-                            <li><a>View full post</a></li>
                         </ul>
                     </div>
                 </div>
@@ -39,18 +38,40 @@
             </div>
         </section>
         <transition class="fade">
-            <div v-if="toggleComments" class="c-modal">
+            <div v-if="showCommentPane" class="c-modal">
                 <div class="c-container">
-                    <a @click="closeComments">X</a>
+                    <a @click="closeCommentPane"><i class="fas fa-times"></i></a>
                     <p>Add a Comment</p>
                     <form @submit.prevent>
-                        <textarea cols="30" rows="10" v-model="comment.content"></textarea>
-                        <button @click="addComment" :disabled="comment.content === ''">Add Comment</button>
+                        <textarea cols="30" rows="10" v-model="comment.content" placeholder="Chatt out your reply"></textarea>
+                        <button @click="addComment" :disabled="comment.content === ''" class="button">Reply</button>
                     </form>
                 </div>
             </div>
         </transition>
-
+        <transition class="fade">
+            <div v-if="showPostsPane" class="p-modal">
+                <div class="p-container">
+                    <a @click="closePostsPane" class="close">X</a>
+                        <div class="post">
+                            <div class="userDisplay"><span class="displayName">{{fullPost.displayName}}</span><p>{{'@' + fullPost.handle}}</p></div>
+                            <span>{{fullPost.createdOn | formatDate}}</span>
+                            <p>{{fullPost.content}}</p>
+                            <ul>
+                                <li><a>Comments: {{fullPost.comments}}</a></li>
+                                <li><a>Likes: {{fullPost.likes}}</a></li>
+                            </ul>
+                        </div>
+                        <div v-show="postComments.length" class="comments">
+                            <div :key="comment.id" v-for="comment in postComments" class="comment">
+                                <span class="displayname">{{comment.displayName}}</span><p>{{'@' + comment.handle}}</p>
+                                <span>{{comment.createdOn | formatDate}}</span>
+                                <p>{{comment.content}}</p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -72,7 +93,10 @@
                     userId: '',
                     content: ''
                 },
-                toggleComments: false
+                showCommentPane: false,
+                showPostsPane: false,
+                fullPost: {},
+                postComments: []
             }
         },
         methods: {
@@ -96,17 +120,17 @@
                 this.$store.commit('setHiddenPosts', null)
                 this.$store.commit('setPosts', updatedPosts)
             },
-            toggleComments(post) {
+            openComments(post) {
                 this.comment.postId = post.id
                 this.comment.userId = post.userId
                 this.comment.postCommentCount = post.comments
-                this.toggleComments = true;
+                this.showCommentPane = true;
             },
-            closeComments() {
+            closeCommentPane() {
                 this.comment.postId = ''
                 this.comment.userId = ''
                 this.comment.content = ''
-                this.toggleComments = false;
+                this.showCommentPane = false;
             },
             addComment() {
                 const postId = this.comment.postId
@@ -123,12 +147,34 @@
                     fb.postCollection.doc(postId).update({
                         comments: postCommentCount + 1
                     }).then(() => {
-                        this.closeComments()
+                        this.closeCommentPane()
                     })
                 }).catch(err => {
                     console.log(err)
                 })
+            },
+            viewPosts(post) {
+                fb.commentsCollection.where('postId', '==', post.id).get().then(docs => {
+                    let commentsArr = []
+
+                    docs.forEach(doc => {
+                        const comment = doc.data()
+                        comment.id = doc.id
+                        commentsArr.push(comment)
+                    })
+
+                    this.postComments = commentsArr
+                    this.fullPost = post
+                    this.showPostsPane = true
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+            closePostsPane() {
+                this.postComments = []
+                this.showPostsPane = false
             }
+
 
         },
         computed: {
