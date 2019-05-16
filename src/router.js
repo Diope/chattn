@@ -27,14 +27,6 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
-    },
-    {
-      path: "/profile",
-      name: "Profile",
-      component: Profile,
-      meta: {
-        requiresAuth: true
-      }
     }
   ]
 });
