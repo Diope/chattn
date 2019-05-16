@@ -15,7 +15,7 @@ let app;
 fb.auth.onAuthStateChanged(user => {
   if (!app) {
     app = new Vue({
-      router, //called with this.$router
+      router,
       store,
       render: h => h(App)
     }).$mount("#app");

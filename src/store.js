@@ -2,6 +2,8 @@
 /* eslint-disable no-unused-vars */
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "./router";
+import { sync } from "vuex-router-sync";
 
 const fb = require("./FirebaseConfig");
 
@@ -77,7 +79,9 @@ export const store = new Vuex.Store({
     currentUser: null,
     userProfile: {},
     posts: [],
-    hiddenPosts: []
+    hiddenPosts: [],
+    requestedUser: null,
+    requestedUserProfile: {}
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -90,20 +94,23 @@ export const store = new Vuex.Store({
         // eslint-disable-next-line no-console
         .catch(err => console.log(err));
     },
+    // findProfile({ commit }) {
+    //   const user = store;
+    //   console.log(user);
+    //   commit("setRequestedProfile", user);
+    // },
     clearData({ commit }) {
       commit("setCurrentUser", null);
       commit("setUserProfile", {});
       commit("setPosts");
+      commit("setRequestedProfile", {});
     },
     updateProfile({ commit, state }, data) {
-      const displayName = data.displayName;
-      const handle = data.handle;
-      const location = data.location;
-      const bio = data.bio;
+      const { displayName, handle, location, bio, website, birth } = data;
 
       fb.userCollection
         .doc(state.currentUser.uid)
-        .update({ displayName, handle, location, bio })
+        .update({ displayName, handle, location, bio, website, birth })
         .then(user => {
           fb.postCollection
             .where("userId", "==", state.currentUser.uid)
@@ -145,6 +152,9 @@ export const store = new Vuex.Store({
     setPosts(state, value) {
       state.posts = value;
     },
+    setRequestedProfile(state, value) {
+      state.requestedUser = value;
+    },
     setHiddenPosts(state, value) {
       if (value) {
         // console.log((!state.hiddenPosts.some(post => post.id === value.id))
@@ -157,3 +167,5 @@ export const store = new Vuex.Store({
     }
   }
 });
+
+sync(store, router);

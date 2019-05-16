@@ -5,6 +5,7 @@ import firebase from "firebase";
 import Dashboard from "./components/Dashboard.vue";
 import Login from "./components/Login.vue";
 import Settings from "./components/Settings.vue";
+import UserProfile from "./components/UserProfile.vue";
 
 Vue.use(Router);
 
@@ -32,6 +33,14 @@ const router = new Router({
       path: "/settings",
       name: "Settings",
       component: Settings,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/u/:handle",
+      name: "UserProfile",
+      component: UserProfile,
       meta: {
         requiresAuth: true
       }
