@@ -11,6 +11,10 @@ fb.auth.onAuthStateChanged(user => {
     store.commit("setCurrentUser", user);
     store.dispatch("fetchUserProfile");
 
+    fb.userCollection.doc(user.uid).onSnapshot(doc => {
+      store.commit("setUserProfile", doc.data());
+    });
+
     // grab posts from post collection
     fb.postCollection.orderBy("createdOn", "desc").onSnapshot(posts => {
       let currentUserPosts;
@@ -88,6 +92,44 @@ export const store = new Vuex.Store({
       commit("setCurrentUser", null);
       commit("setUserProfile", {});
       commit("setPosts");
+    },
+    updateProfile({ commit, state }, data) {
+      const displayName = data.displayName;
+      const handle = data.handle;
+      const location = data.location;
+
+      fb.userCollection
+        .doc(state.currentUser.uid)
+        .update({ displayName, handle, location })
+        .then(user => {
+          fb.postCollection
+            .where("userId", "==", state.currentUser.uid)
+            .get()
+            .then(docs => {
+              docs.forEach(doc => {
+                fb.postCollection.doc(doc.id).update({
+                  displayName: displayName,
+                  handle: handle,
+                  location: location
+                });
+              });
+            });
+          fb.commentsCollection
+            .where("userId", "==", state.currentUser.uid)
+            .get()
+            .then(docs => {
+              docs.forEach(doc => {
+                fb.commentsCollection.doc(doc.id).update({
+                  displayName: displayName,
+                  handle: handle,
+                  location: location
+                });
+              });
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   mutations: {
