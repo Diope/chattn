@@ -28,7 +28,7 @@
                         <p @click="viewPosts(post)">{{post.content }}</p>
                         <ul>
                             <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
-                            <li><a><i class="fas fa-heart"></i> {{post.likes}}</a></li>
+                            <li><a @click="likePost(post.id, post.likes)"><i class="fas fa-heart"></i> {{post.likes}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -173,8 +173,27 @@
             closePostsPane() {
                 this.postComments = []
                 this.showPostsPane = false
-            }
+            },
+            likePost(postId, postLikes) {
+                const docId = `${this.currentUser.uid}_${postId}`
 
+                fb.likesCollection.doc(docId).get().then(doc => {
+                    if (doc.exists) {
+                        return
+                    }
+
+                    fb.likesCollection.doc(docId).set({
+                        postId: postId,
+                        userId: this.currentUser.uid
+                    }).then(() => {
+                        fb.postCollection.doc(postId).update({
+                            likes: postLikes + 1
+                        })
+                    })
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
 
         },
         computed: {
