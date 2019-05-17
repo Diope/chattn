@@ -77,7 +77,6 @@
 
 <script>
     import {mapState} from 'vuex'
-    import {DateTime} from 'luxon'
     import moment from 'moment'
     const fb = require('../FirebaseConfig.js')
 

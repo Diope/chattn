@@ -6,6 +6,7 @@ import Dashboard from "./components/Dashboard.vue";
 import Login from "./components/Login.vue";
 import Settings from "./components/Settings.vue";
 import UserProfile from "./components/UserProfile.vue";
+import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.use(Router);
 
@@ -14,7 +15,14 @@ const router = new Router({
   routes: [
     {
       path: "*",
-      redirect: "/dashboard"
+      component: PageNotFound
+    },
+    {
+      path: "/",
+      component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/login",
@@ -38,7 +46,7 @@ const router = new Router({
       }
     },
     {
-      path: "/u/:handle",
+      path: "/u/:id",
       name: "UserProfile",
       component: UserProfile,
       meta: {
