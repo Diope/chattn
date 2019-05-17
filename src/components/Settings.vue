@@ -17,6 +17,12 @@
                 <label for="location">Location</label>
                 <input type="text" v-model.trim="location" :placeholder="userProfile.location" id="location">
 
+                <label for="website">Website</label>
+                <input type="url" v-model.trim="website" :placeholder="userProfile.website" id="website">
+
+                <label for="birth">Birth Date</label>
+                <input type="datetime" v-model="birth" :placeholder="userProfile.birth" id="birth">
+
                 <label for="bio">About Me</label>
                 <textarea v-model.trim="bio" :placeholder="userProfile.bio" id="bio" />
 
@@ -36,6 +42,8 @@ export default {
             handle: '',
             location: '',
             bio: '',
+            website: '',
+            birth: '',
             showSuccess: false
         }
     },
@@ -48,13 +56,17 @@ export default {
                 displayName: this.displayName !== '' ? this.displayName : this.userProfile.displayName,
                 handle: this.handle !== '' ? this.handle : this.userProfile.handle,
                 location: this.location !== '' ? this.location : this.userProfile.location,
-                bio: this.bio !== '' ? this.bio : this.userProfile.bio
+                bio: this.bio !== '' ? this.bio : this.userProfile.bio,
+                birth: this.birth !== '' ? this.birth : this.userProfile.birth,
+                website: this.website !== '' ? this.website : this.userProfile.website
             })
 
             this.displayName = ''
             this.handle = ''
             this.location = ''
             this.bio = ''
+            this.website = ''
+            this.birth = ''
             this.showSuccess = true
 
             setTimeout(() => {

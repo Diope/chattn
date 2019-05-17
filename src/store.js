@@ -96,14 +96,11 @@ export const store = new Vuex.Store({
       commit("setPosts");
     },
     updateProfile({ commit, state }, data) {
-      const displayName = data.displayName;
-      const handle = data.handle;
-      const location = data.location;
-      const bio = data.bio;
+      const { displayName, handle, bio, website, location, birth } = data;
 
       fb.userCollection
         .doc(state.currentUser.uid)
-        .update({ displayName, handle, location, bio })
+        .update({ displayName, handle, location, bio, website, birth })
         .then(user => {
           fb.postCollection
             .where("userId", "==", state.currentUser.uid)
