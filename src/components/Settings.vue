@@ -8,6 +8,11 @@
                 <p v-if="showSuccess" class="success">Your profile has been updated</p>
             </transition>
             <form @submit.prevent>
+
+                <label for="profilePic">Profile Picture</label>
+                <input type="file" multiple accept="image/jpeg" @change="detectFiles($event.target.files)">
+                <div class="progress-bar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}</div>
+
                 <label for="displayName">Display Name</label>
                 <input type="text" v-model.trim="displayName" :placeholder="userProfile.displayName" id="displayName">
 
@@ -35,6 +40,7 @@
 <script>
 import {mapState} from 'vuex'
 import { setTimeout } from 'timers';
+
 export default {
     data() {
         return {
@@ -44,6 +50,7 @@ export default {
             bio: '',
             website: '',
             birth: '',
+            profilePic: '',
             showSuccess: false
         }
     },
@@ -58,7 +65,8 @@ export default {
                 location: this.location !== '' ? this.location : this.userProfile.location,
                 bio: this.bio !== '' ? this.bio : this.userProfile.bio,
                 website: this.website !== '' ? this.website : this.userProfile.website,
-                birth: this.birth !== '' ? this.birth : this.userProfile.birth
+                birth: this.birth !== '' ? this.birth : this.userProfile.birth,
+                profilePic: this.profilePic !== '' ? this.profilePic : this.userProfile.profilePic
             })
 
             this.displayName = ''
@@ -67,6 +75,7 @@ export default {
             this.bio = ''
             this.website = ''
             this.birth = ''
+            this.profilePic = ''
             this.showSuccess = true
 
             setTimeout(() => {
