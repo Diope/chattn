@@ -148,8 +148,9 @@ header {
         }
 
         p {
-            color: #537179;
             font-size: 1rem;
+            color: lighten($dark, 15%);
+            margin: 0;
         }
     }
 
@@ -333,7 +334,7 @@ header {
     padding: 2rem 0;
 
     .col1 {
-        max-width: 600px;
+        max-width: 700px;
         margin: 5vh auto 0;
         background: $white;
         padding: 2rem;

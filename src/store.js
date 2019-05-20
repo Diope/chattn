@@ -79,8 +79,8 @@ export const store = new Vuex.Store({
     userProfile: {},
     posts: [],
     hiddenPosts: [],
-    requestedUser: "",
-    returnedUser: {}
+    requestedUser: {},
+    userPosts: []
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -93,22 +93,12 @@ export const store = new Vuex.Store({
         // eslint-disable-next-line no-console
         .catch(err => console.log(err));
     },
-    findProfile({ commit, state }) {
-      let user = router.currentRoute.params.id;
-
-      fb.userCollection
-        .doc(state.requestedUser)
-        .get()
-        .then(res => {
-          commit("setRequestedProfile2", res.data());
-        })
-        .catch(err => console.log(err.message));
-    },
     clearData({ commit }) {
       commit("setCurrentUser", null);
       commit("setUserProfile", {});
       commit("setPosts");
       commit("setRequestedProfile", {});
+      commit("setUserPosts");
     },
     updateProfile({ commit, state }, data) {
       const { displayName, handle, location, bio, website, birth } = data;
@@ -145,7 +135,8 @@ export const store = new Vuex.Store({
         .catch(err => {
           console.log(err);
         });
-    }
+    },
+    finduserPosts({ commit, state }) {}
   },
   mutations: {
     setCurrentUser(state, value) {
@@ -160,7 +151,9 @@ export const store = new Vuex.Store({
     setRequestedProfile(state, value) {
       state.requestedUser = value;
     },
-
+    setUserPosts(state, value) {
+      state.userPosts = value;
+    },
     setHiddenPosts(state, value) {
       if (value) {
         // console.log((!state.hiddenPosts.some(post => post.id === value.id))
