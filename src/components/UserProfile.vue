@@ -5,10 +5,12 @@
                 <div class="profile__info-pane">
                     <h3>{{requestedUser.displayName}}</h3>
                     <span>{{'@' + requestedUser.handle}}</span>
-                    <p>{{requestedUser.bio}}</p>
-                    <p><i class="fas fa-birthday-cake"> </i>{{requestedUser.birth}}</p>
-                    <p><i class="fas fa-map-marker-alt"> </i>{{requestedUser.location}}</p>
-                    <p><i class="fas fa-link"> </i>{{requestedUser.website}}</p>
+                    <div class="userBio">{{requestedUser.bio}}</div>
+                    <div class="userMeta">
+                        <p class="metaItem"><i class="fas fa-birthday-cake"></i> {{requestedUser.birth | birthDate}}</p>
+                        <p class="metaItem"><i class="fas fa-map-marker-alt"></i> {{requestedUser.location}}</p>
+                        <p class="metaItem"><i class="fas fa-link"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a></p>
+                    </div>
                 </div>
                 
                 <div v-show="userPosts.length" class="profile__posts-pane">
@@ -75,6 +77,9 @@ export default {
                 if (!val) return '-'
                 let date = val.toDate()
                 return moment(date).fromNow()
+            },
+            birthDate(val) {
+                return moment(val).format("Born MMMM Do, YYYY")
             }
         }
     
@@ -91,6 +96,23 @@ export default {
         .profile__info-pane {
             padding: 2rem;
             border-bottom: 1px solid $light;
+
+            .userBio {
+                padding: 0.8rem 0;
+            }
+
+            .userMeta {
+                display: flex;
+                justify-content: space-between;
+                width: 90%;
+                
+                .metaItem {
+                    margin: 0 auto 0 0;
+                    font-size: 0.9rem;
+                    color: lighten($dark, 17%);
+                }
+    
+            }
         }
 
         .profile__userPosts {
