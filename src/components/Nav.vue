@@ -5,7 +5,7 @@
                 <router-link to="dashboard"><div class="title">Chattn</div></router-link>
                 <ul class="inline">
                     <li>
-                        <router-link to="dashboard">Dashboard</router-link>
+                        <router-link to="/dashboard" exact>Timeline</router-link>
                     </li>
                     <li>
                         <router-link to="settings">Settings</router-link>

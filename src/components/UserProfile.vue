@@ -1,6 +1,6 @@
 <template>
     <section id="settings">
-            <div class="profile">
+            <div class="userProfile">
     
                 <div class="profile__info-pane">
                     <h3>{{requestedUser.displayName}}</h3>
@@ -49,7 +49,11 @@ export default {
     },
     methods: {
         fetchUser() {
-            fb.userCollection.doc(this.$route.params.id).get().then(res => {
+            let userId = this.$route.params.id
+            fb.userCollection.doc(userId).get().then(res => {
+                if (res.empty) {
+                    this.$router.go('/dashboard')
+                } 
                 this.$store.commit('setRequestedProfile', res.data())
             })
         },
@@ -88,7 +92,7 @@ export default {
 
 <style lang="scss">
     @import '../assets/scss/global';
-    .profile {
+    .userProfile {
         max-width: 768px;
         margin: 5vh auto 0;
         background: white;

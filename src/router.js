@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import firebase from "firebase";
+const fb = require("./FirebaseConfig");
 
 import Dashboard from "./components/Dashboard.vue";
 import Login from "./components/Login.vue";
@@ -15,6 +16,7 @@ const router = new Router({
   routes: [
     {
       path: "*",
+      name: PageNotFound,
       component: PageNotFound
     },
     {
@@ -46,7 +48,7 @@ const router = new Router({
       }
     },
     {
-      path: "/:id",
+      path: "/u/:id",
       name: "UserProfile",
       component: UserProfile,
       meta: {
@@ -59,6 +61,16 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
   const currentUser = firebase.auth().currentUser;
+  // const requestedUser = router.currentRoute.params.handle;
+
+  // fb.userCollection
+  //   .where("handle", "==", requestedUser)
+  //   .get()
+  //   .then(res => {
+  //     if (res.empty) {
+  //       next("/dashboard");
+  //     }
+  //   });
 
   if (requiresAuth && !currentUser) {
     next("/login");
