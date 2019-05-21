@@ -136,23 +136,7 @@ header {
         }
         
     }
-    .userDisplay {
-        padding-right: 10px;
-        display: flex;
-        align-content: center;
-
-        span.displayName {
-            font-size: 1.2rem;
-            padding-right: 6px;
-            color: $dark;
-        }
-
-        p {
-            font-size: 1rem;
-            color: lighten($dark, 15%);
-            margin: 0;
-        }
-    }
+    
 
     .create-post {
         p {
@@ -189,45 +173,7 @@ header {
             color: darken($light, 25%);
         }
     }
-    .post {
-        border: 1px solid #e6ecf0;
-        border-bottom: 0;
-        font-size: 14px;
-        padding: 1.5rem;
-        background: $white;
-
-        &:hover {
-            background: #f5f8fa;
-        }
-
-        &:last-of-type {
-            border-bottom: 1px solid $light;
-        }
-
-        h5 {
-            margin: 0 0 0.5rem;
-        }
-        span {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 0.5rem;
-            color: darken($light, 25%);
-        }
-        p {
-            margin: 0;
-        }
-        ul {
-            list-style: none;
-            margin: 1rem 0 0;
-            padding: 0;
-
-            li {
-                display: inline-block;
-                margin-right: 1rem;
-                font-size: 12px;
-            }
-        }
-    }
+    
     .no-results {
         border: 1px solid #e6ecf0;
         background: $white;

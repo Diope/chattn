@@ -1,15 +1,24 @@
 <template>
     <section id="settings">
-            <div class="userProfile">
+            <div class="userProfilee">
     
                 <div class="profile__info-pane">
+                    <div class="profile_spaceBetween">
+                        <div class="profile__info-pane-profilePic">
+                            <img :src="requestedUser.profilePic" style="height: 100%; width: 100%; object-fit: cover">
+                        </div>
+                        <div v-show="currentUser.uid === requestedUser.userId">
+                           <router-link to="/settings"><button class="button">Edit profile</button></router-link>
+                        </div>
+                    </div>
                     <h3>{{requestedUser.displayName}}</h3>
                     <span>{{'@' + requestedUser.handle}}</span>
                     <div class="userBio">{{requestedUser.bio}}</div>
                     <div class="userMeta">
-                        <p class="metaItem"><i class="fas fa-birthday-cake"></i> {{requestedUser.birth | birthDate}}</p>
                         <p class="metaItem"><i class="fas fa-map-marker-alt"></i> {{requestedUser.location}}</p>
                         <p class="metaItem"><i class="fas fa-link"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a></p>
+                        <p class="metaItem"><i class="fas fa-birthday-cake"></i> {{requestedUser.birth | birthDate}}</p>
+                        <p class="metaItem"><i class="fas fa-calendar-alt"></i> {{requestedUser.createdOn | joinDate}}</p>
                     </div>
                 </div>
                 
@@ -45,7 +54,7 @@ export default {
         '$route': ['fetchUser', 'findUserPosts']
     },
     computed: {
-        ...mapState(['requestedUser'])
+        ...mapState(['requestedUser', 'currentUser'])
     },
     methods: {
         fetchUser() {
@@ -53,7 +62,7 @@ export default {
             fb.userCollection.doc(userId).get().then(res => {
                 if (res.empty) {
                     this.$router.go('/dashboard')
-                } 
+                }
                 this.$store.commit('setRequestedProfile', res.data())
             })
         },
@@ -68,7 +77,7 @@ export default {
                     })
 
                     this.userPosts = postsArr
-                    console.log(this.userPosts)
+                    // console.log(this.userPosts)
 
                 }).catch(err => {
                     console.log(err)
@@ -84,6 +93,9 @@ export default {
             },
             birthDate(val) {
                 return moment(val).format("Born MMMM Do, YYYY")
+            },
+            joinDate(val) {
+                return moment(val).format("LL")
             }
         }
     
@@ -92,14 +104,33 @@ export default {
 
 <style lang="scss">
     @import '../assets/scss/global';
-    .userProfile {
-        max-width: 768px;
+    .userProfilee {
+        width: 50%;
         margin: 5vh auto 0;
         background: white;
 
         .profile__info-pane {
             padding: 2rem;
             border-bottom: 1px solid $light;
+    
+            h3 {
+                margin-bottom: 0;
+            }
+
+            .profile_spaceBetween {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .profile__info-pane-profilePic {
+                height: 150px;
+                width: 150px;
+                border: 1px solid black;
+                border-radius: 50%;
+                overflow: hidden;
+                margin-bottom: 0.8rem;
+            }
 
             .userBio {
                 padding: 0.8rem 0;
@@ -107,8 +138,9 @@ export default {
 
             .userMeta {
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: space-between;
-                width: 90%;
+                width: 93%;
                 
                 .metaItem {
                     margin: 0 auto 0 0;

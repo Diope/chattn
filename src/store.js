@@ -100,6 +100,34 @@ export const store = new Vuex.Store({
       commit("setRequestedProfile", {});
       commit("setUserPosts");
     },
+    updateProfilePhoto({commit, state}, data) {
+      const {profilePic} = data;
+      fb.userCollection.doc(state.currentUser.uid).update({profilePic}).then(user => {
+        fb.postCollection
+          .where("userId", "==", state.currentUser.uid)
+          .get()
+          .then(docs => {
+            docs.forEach(doc => {
+              fb.postCollection.doc(doc.id).update({
+                profilePic: profilePic
+              });
+            });
+          });
+        fb.commentsCollection
+          .where("userId", "==", state.currentUser.uid)
+          .get()
+          .then(docs => {
+            docs.forEach(doc => {
+              fb.commentsCollection.doc(doc.id).update({
+                profilePic: profilePic
+              });
+            });
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
     updateProfile({ commit, state }, data) {
       const { displayName, handle, location, bio, website, birth } = data;
 

@@ -5,7 +5,6 @@
                 <div class="profile">
                     <div class="userDisplay"><span class="displayName">{{userProfile.displayName}}</span><p>{{'@' + userProfile.handle}}</p></div>
                     <div class="create-post">
-                        <p>New Post</p>
                         <form @submit.prevent>
                             <textarea v-model.trim="post.content" cols="30" rows="10"></textarea>
                             <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
@@ -23,13 +22,28 @@
                 </transition>
                 <div v-if="posts.length">
                     <div :key="post.id" v-for="post in posts" class="post" >
-                        <div class="userDisplay"><span class="displayName">{{post.displayName}}</span><p>{{'@' + post.handle}}</p></div>
-                        <span>{{post.createdOn | formatDate }}</span>
-                        <p @click="viewPosts(post)">{{post.content }}</p>
-                        <ul>
-                            <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
-                            <li><a @click="likePost(post.id, post.likes)"><i class="fas fa-heart"></i> {{post.likes}}</a></li>
-                        </ul>
+                        <div class="flexWrap">
+                            <div class="profilePhotoContainer">
+                                <img :src="post.profilePic" style="height: 100%; width: 100%; object-fit: cover" />
+                            </div>
+                            <div class="userDisplay">
+                                <router-link :to="`/u/${post.userId}`">
+                                    <span class="displayName">
+                                        {{post.displayName}}
+                                        <p>{{'@' + post.handle}}</p>
+                                        ・ <p class="timeAgo">{{post.createdOn | formatDate }}</p>
+                                    </span>
+                                </router-link>
+                            <div class="userPostContent">
+                                <p @click="viewPosts(post)">{{post.content }}</p>
+                            </div>
+                            <ul>
+                                <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
+                                <li><a @click="likePost(post.id, post.likes)"><i class="fas fa-heart"></i> {{post.likes}}</a></li>
+                            </ul>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
                 <div v-else>
@@ -106,6 +120,7 @@
                     handle: this.userProfile.handle,
                     content: this.post.content,
                     comments: 0,
+                    profilePic: this.userProfile.profilePic,
                     likes: 0,
                     createdOn: new Date()
                 }).then(ref => {

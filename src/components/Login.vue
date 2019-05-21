@@ -118,7 +118,9 @@ export default {
                 fb.userCollection.doc(user.user.uid).set({
                     handle: this.signupForm.handle,
                     displayName: this.signupForm.displayName,
-                    email: this.signupForm.email
+                    email: this.signupForm.email,
+                    userId: user.user.uid,
+                    createdOn: new Date()
                 }).then(() => {
                     this.$store.dispatch('fetchUserProfile')
                     this.performingRequest = false;
