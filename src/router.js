@@ -3,7 +3,7 @@ import Router from "vue-router";
 import firebase from "firebase";
 const fb = require("./FirebaseConfig");
 
-import Dashboard from "./components/Dashboard.vue";
+import Timeline from "./components/Timeline.vue";
 import Login from "./components/Login.vue";
 import Settings from "./components/Settings.vue";
 import UserProfile from "./components/UserProfile.vue";
@@ -21,7 +21,7 @@ const router = new Router({
     },
     {
       path: "/",
-      component: Dashboard,
+      component: Timeline,
       meta: {
         requiresAuth: true
       }
@@ -32,9 +32,9 @@ const router = new Router({
       component: Login
     },
     {
-      path: "/dashboard",
-      name: "Dashboard",
-      component: Dashboard,
+      path: "/timeline",
+      name: "Timeline",
+      component: Timeline,
       meta: {
         requiresAuth: true
       }

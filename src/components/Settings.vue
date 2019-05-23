@@ -38,7 +38,11 @@
                 <label for="bio">About Me</label>
                 <textarea v-model.trim="bio" :placeholder="userProfile.bio" id="bio" />
 
-                <button @click="updateProfile" class="button">Update Profile</button>
+                <button 
+                    @click="updateProfile" 
+                    class="button"
+                    :disabled="displayName === '' && handle === '' && location === '' && website === '' && birth === '' && bio === ''"
+                >Update Profile</button>
             </form>
         </div>
     </section>
@@ -103,7 +107,7 @@ export default {
         upload (file) {
             this.fileName = file.name
             this.uploading = true
-            this.uploadTask = fb.storage.child('profilePictures/' + `${this.userProfile.userId}/` + file.name).put(file)
+            this.uploadTask = fb.storage.child(`${this.userProfile.userId}` + '/profile_picture/' + file.name).put(file)
         }
         
     },

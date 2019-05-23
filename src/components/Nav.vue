@@ -2,10 +2,10 @@
     <header>
         <section>
             <div class="col1">
-                <router-link to="dashboard"><div class="title">Chattn</div></router-link>
+                <router-link to="timeline"><div class="title">Chattn</div></router-link>
                 <ul class="inline">
                     <li>
-                        <router-link to="/dashboard" exact>Timeline</router-link>
+                        <router-link to="/timeline" exact>Timeline</router-link>
                     </li>
                     <li>
                         <router-link to="settings">Settings</router-link>
@@ -38,5 +38,6 @@ export default {
 </script>
 
 <style>
+
 
 </style>

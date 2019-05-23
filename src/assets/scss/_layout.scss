@@ -108,7 +108,7 @@ header {
 }
 
 // dashboard
-#dashboard {
+#timeline {
     section {
         padding: 2rem 0;
     }
@@ -136,7 +136,6 @@ header {
         }
         
     }
-    
 
     .create-post {
         p {
@@ -148,7 +147,8 @@ header {
         }
         .button {
             margin-top: 1rem;
-            width: 100%;
+            min-width: 90px;
+            width: 75%;
             z-index: 5;
         }
     }
@@ -273,6 +273,31 @@ header {
             }
         }
     }
+
+    .postButtons {
+        display: flex;
+        align-content: center;
+        justify-content: space-between;
+        cursor: pointer;
+
+        .photoButtonWrapper {
+            padding: 1.3rem 1.3rem;
+            border-radius: 50%;
+            background: $primary;
+            height: 14px;
+            width: 14px;
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+    
+            i {
+                margin: -8px;
+            }
+    
+        }
+    }
+
+    
 }
 
 // settings
@@ -299,3 +324,4 @@ header {
         margin-top: 2rem;
     }
 }
+

@@ -1,5 +1,5 @@
 <template>
-    <div id="dashboard">
+    <div id="timeline">
         <section>
             <div class="col1">
                 <div class="profile">
@@ -7,7 +7,13 @@
                     <div class="create-post">
                         <form @submit.prevent>
                             <textarea v-model.trim="post.content" cols="30" rows="10"></textarea>
-                            <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
+                            <input type="file" accept="image/*" :multiple="false" @change="detectFiles($event)" ref="tweetImage" style="display: none">
+                            <div class="postButtons">
+                                <div class="photoButtonWrapper" @click="$refs.tweetImage.click()">
+                                    <i class="fas fa-camera-retro"></i>
+                                </div>
+                                <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -35,7 +41,13 @@
                                     </span>
                                 </router-link>
                             <div class="userPostContent">
-                                <p @click="viewPosts(post)">{{post.content }}</p>
+                                <div class="postText" @click="viewPosts(post)">
+                                    {{post.content}}
+                                </div>
+                                <div v-show="post.tweetPic !== ''" class="postImage">
+                                    <img :src="post.tweetPic" alt="">
+                                </div>
+                                
                             </div>
                             <ul>
                                 <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
@@ -98,7 +110,8 @@
         data() {
             return {
                 post: {
-                    content: ''
+                    content: '',
+                    tweetPic: ''
                 },
                 comment: {
                     postCommentCount: 0,
@@ -107,7 +120,10 @@
                     content: ''
                 },
                 showCommentPane: false,
+                uploadTask: '',
+                uploadEnd: false,
                 showPostsPane: false,
+                progressUpload: 0,
                 fullPost: {},
                 postComments: []
             }
@@ -121,10 +137,12 @@
                     content: this.post.content,
                     comments: 0,
                     profilePic: this.userProfile.profilePic,
+                    tweetPic: this.post.tweetPic,
                     likes: 0,
                     createdOn: new Date()
                 }).then(ref => {
                     this.post.content = ''
+                    this.post.tweetPic = ''
                 }).catch(err => {
                     console.log(err)
                 })
@@ -207,8 +225,39 @@
                 }).catch(err => {
                     console.log(err)
                 })
+            },
+            detectFiles (e) {
+                let fileList = e.target.files || e.dataTransfer.files
+                Array.from(Array(fileList.length).keys()).map(x => {
+                    this.upload(fileList[x])
+                })
+            },
+            upload (file) {
+                this.fileName = file.name
+                this.uploading = true
+                this.uploadTask = fb.storage.child(`${this.currentUser.uid}` +'/tweet_images/' + file.name).put(file)
             }
-
+        
+         },
+        watch: {
+            uploadTask: function () {
+                this.uploadTask.on('state_changed', sp => {
+                    this.progressUpload = Math.floor(sp.bytesTransferred / sp.totalBytes * 100)
+                    console.log(this.progressUpload)
+                },
+                null,
+                () => {
+                    this.uploadTask.snapshot.ref.getDownloadURL().then(tweetPic => {
+                        this.post.tweetPic = tweetPic
+                        this.uploadEnd = true
+                        console.log(tweetPic)
+                        // this.$store.dispatch('PostTweetPhoto', {profilePic: this.profilePic !== '' ? this.profilePic : this.userProfile.profilePic})
+                        setTimeout(() => {
+                            this.uploadEnd = false
+                        }, 2500);
+                    })
+                })
+            }
         },
         computed: {
             ...mapState(['userProfile', 'currentUser', 'posts', 'hiddenPosts'])
@@ -223,6 +272,18 @@
     }
 </script>
 
-<style>
+<style lang="scss">
+    .photoButtonWrapper {
+        .fas {
+            color: white;
+        }
+    }
+    .postText {
+        padding-bottom: 1rem;
+    }
+    .postImage {
+        border-radius: 4px;
+        border: 1px solid #657786;
+    }
 
 </style>
