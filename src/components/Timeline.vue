@@ -15,9 +15,11 @@
                                 <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
                             </div>
                         </form>
+                        <div class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}%</div>
                     </div>
                 </div>
             </div>
+
             <div class="col2">
                 <transition class="fade">
                     <div v-if="hiddenPosts.length" @click="showNewPosts" class="hidden-posts">
@@ -26,43 +28,68 @@
                         </p>
                     </div>
                 </transition>
+
                 <div v-if="posts.length">
                     <div :key="post.id" v-for="post in posts" class="post" >
                         <div class="flexWrap">
-                            <div class="profilePhotoContainer">
-                                <img :src="post.profilePic" style="height: 100%; width: 100%; object-fit: cover" />
-                            </div>
-                            <div class="userDisplay">
+                            <div class="profilePicWrapper">
                                 <router-link :to="`/u/${post.userId}`">
-                                    <span class="displayName">
-                                        {{post.displayName}}
-                                        <p>{{'@' + post.handle}}</p>
-                                        ・ <p class="timeAgo">{{post.createdOn | formatDate }}</p>
-                                    </span>
+                                    <div v-if="post.profilePic !== null" class="profilePhotoContainer">
+                                        <img :src="post.profilePic" style="height: 100%; width: 100%; object-fit: cover" />
+                                    </div>
+                                    <div v-else class="profilePhotoContainer">
+                                        <img src="../assets/images/default.png" style="height: 100%; width: 100%; object-fit: cover" />
+                                    </div>
                                 </router-link>
-                            <div class="userPostContent">
-                                <div class="postText" @click="viewPosts(post)">
-                                    {{post.content}}
-                                </div>
-                                <div v-show="post.tweetPic !== ''" class="postImage">
-                                    <img :src="post.tweetPic" alt="">
-                                </div>
-                                
                             </div>
-                            <ul>
-                                <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
-                                <li><a @click="likePost(post.id, post.likes)"><i class="fas fa-heart"></i> {{post.likes}}</a></li>
-                            </ul>
+
+                            <div class="postMain">
+
+                                <div class="postContainer">
+
+                                    <div class="postContent">
+
+                                        <div class="userDisplay">
+                                            <router-link :to="`/u/${post.userId}`">
+                                                <span class="displayName">
+                                                    {{post.displayName}}
+                                                    <p>{{'@' + post.handle}}</p>
+                                                    ・ <p class="timeAgo">{{post.createdOn | formatDate }}</p>
+                                                </span>
+                                            </router-link>
+                                        </div>
+                                        
+                                        <div class="postText" @click="viewPosts(post)">
+                                            {{post.content}}
+                                        </div>
+                                            
+                                        </div>
+
+                                        <div v-if="post.tweetPic !== null" class="postImage">
+                                            <img :src="post.tweetPic" alt="" >
+                                        </div>
+
+                                    </div>
+                                    <div class="bottomButton">
+                                        <ul>
+                                            <li><a @click="openComments(post)"><i class="fas fa-comment"></i> {{post.comments}}</a></li>
+                                            <li><a @click="likePost(post.id, post.likes)"><i class="fas fa-heart"></i> {{post.likes}}</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
                             </div>
+
                         </div>
                         
                     </div>
-                </div>
+
                 <div v-else>
                     <p class="no-results">There are currently no posts</p>
                 </div>
             </div>
-        </section>
+        
         <transition class="fade">
             <div v-if="showCommentPane" class="c-modal">
                 <div class="c-container">
@@ -75,12 +102,20 @@
                 </div>
             </div>
         </transition>
+
         <transition class="fade">
             <div v-if="showPostsPane" class="p-modal">
+
                 <div class="p-container">
+
                     <a @click="closePostsPane" class="close">X</a>
                         <div class="post">
-                            <div class="userDisplay"><span class="displayName">{{fullPost.displayName}}</span><p>{{'@' + fullPost.handle}}</p></div>
+
+                            <div class="userDisplay">
+
+                                <span class="displayName">{{fullPost.displayName}}</span><p>{{'@' + fullPost.handle}}</p>
+                            </div>
+
                             <span>{{fullPost.createdOn | formatDate}}</span>
                             <p>{{fullPost.content}}</p>
                             <ul>
@@ -88,6 +123,7 @@
                                 <li><a>Likes: {{fullPost.likes}}</a></li>
                             </ul>
                         </div>
+
                         <div v-show="postComments.length" class="comments">
                             <div :key="comment.id" v-for="comment in postComments" class="comment">
                                 <span class="displayname">{{comment.displayName}}</span><p>{{'@' + comment.handle}}</p>
@@ -95,9 +131,12 @@
                                 <p>{{comment.content}}</p>
                             </div>
                         </div>
+
                 </div>
+
             </div>
         </transition>
+        </section>
     </div>
 </template>
 
@@ -111,7 +150,7 @@
             return {
                 post: {
                     content: '',
-                    tweetPic: ''
+                    tweetPic: null
                 },
                 comment: {
                     postCommentCount: 0,
@@ -233,9 +272,10 @@
                 })
             },
             upload (file) {
+                const randomHex = Math.random().toString(16).slice(2,8)
                 this.fileName = file.name
                 this.uploading = true
-                this.uploadTask = fb.storage.child(`${this.currentUser.uid}` +'/tweet_images/' + file.name).put(file)
+                this.uploadTask = fb.storage.child(`${this.currentUser.uid}` +'/tweet_images/' + `${randomHex}_${file.name}`).put(file)
             }
         
          },
@@ -278,12 +318,9 @@
             color: white;
         }
     }
-    .postText {
-        padding-bottom: 1rem;
-    }
-    .postImage {
-        border-radius: 4px;
-        border: 1px solid #657786;
+    .progressBar {
+        margin: 10px 0;
+        background: #179BB5;
     }
 
 </style>

@@ -11,10 +11,14 @@
 
                 <div class="profilePicWrapper">
                     <label for="profilePic">Profile Picture</label>
-                    <div class="profilePhotoContainer" @click="$refs.profilePicButton.click()">
-                        <img :src="userProfile.profilePic" style="height: 100%; width: 100%; object-fit: cover"/>
-                        <input type="file" accept="image/*" :multiple="false" @change="detectFiles($event)" ref="profilePicButton" style="display: none">
-                    </div>
+    
+                        <div v-if="userProfile.profilePic !== null" class="profilePhotoContainer" @click="$refs.profilePicButton.click()">
+                            <img :src="userProfile.profilePic" style="height: 100%; width: 100%; object-fit: cover"/>
+                            <input type="file" accept="image/*" :multiple="false" @change="detectFiles($event)" ref="profilePicButton" style="display: none">
+                        </div>
+                        <div v-else class="profilePhotoContainer" @click="$refs.profilePicButton.click()">
+                            <img src="../assets/images/default.png" style="height: 100%; width: 100%; object-fit: cover" />
+                        </div>
                     <transition name="fade">
                         <div v-if="uploadEnd" class="success"><p>Profile Picture has been uploaded</p></div>
                     </transition>
@@ -64,7 +68,7 @@ export default {
             birth: '',
             showSuccess: false,
             uploadEnd: false,
-            profilePic: '',
+            profilePic: null,
             progressUpload: 0,
             uploadTask: ''
         }
@@ -81,7 +85,7 @@ export default {
                 bio: this.bio !== '' ? this.bio : this.userProfile.bio,
                 website: this.website !== '' ? this.website : this.userProfile.website,
                 birth: this.birth !== '' ? this.birth : this.userProfile.birth,
-                profilePic: this.profilePic !== '' ? this.profilePic : this.userProfile.profilePic
+                profilePic: this.profilePic !== null ? this.profilePic : this.userProfile.profilePic
             })
 
             this.displayName = ''
@@ -90,7 +94,7 @@ export default {
             this.bio = ''
             this.website = ''
             this.birth = ''
-            this.profilePic = '',
+            this.profilePic = null,
             this.uploadTask = ''
             this.showSuccess = true
 

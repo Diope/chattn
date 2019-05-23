@@ -120,11 +120,16 @@ export default {
                     displayName: this.signupForm.displayName,
                     email: this.signupForm.email,
                     userId: user.user.uid,
-                    createdOn: new Date()
+                    createdOn: new Date(),
+                    location: null,
+                    website: null,
+                    birth: null,
+                    bio: null,
+                    profilePic: null
                 }).then(() => {
                     this.$store.dispatch('fetchUserProfile')
                     this.performingRequest = false;
-                    this.$router.push('/dashboard')
+                    this.$router.push('/timeline')
                 }).catch(err => console.log(err))
             }).catch(err => {
                 console.log(err);

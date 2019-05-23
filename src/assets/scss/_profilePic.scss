@@ -1,14 +1,21 @@
 .profilePicWrapper {
-    padding-bottom: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    box-direction: normal;
+    box-orient: vertical;
+    box-align: stretch;
+    margin: 0 8px 0 8px !important;
+    cursor: pointer;
 }
 transition.fade{
     padding-bottom: 1.1rem;
 }
 .profilePhotoContainer {
-    height: 80px;
-    width: 80px;
+    max-height: 80px;
+    max-width: 80px;
+    background: blue;
     border: 1px solid black;
     border-radius: 50%;
-    cursor: pointer;
     overflow: hidden;
+    
 }
