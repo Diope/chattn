@@ -217,10 +217,12 @@ header {
         left: 0;
         background: rgba($dark, 0.4);
         z-index: 999;
+        display: flex;
+        flex-wrap: wrap;
 
         .p-container {
             position: fixed;
-            max-width: 600px;
+            max-width: 780px;
             top: 2vh;
             bottom: 2vh;
             left: 0;
@@ -234,17 +236,31 @@ header {
 
             .close {
                 position: absolute;
-                top: 5px;
                 right: 10px;
+                top: 5px;
                 padding: 5px;
             }
 
             .post {
                 border: 0;
                 border-bottom: 1px solid #e6ecf0;
-
                 &:hover {
                     background: $white;
+                }
+
+                .profilePicWrapper{
+                    display: inline-block;
+                }
+
+                .postImage {
+                    img {
+                        width: 100%;
+                        height: auto;
+                        object-fit: cover; 
+                        max-height: 600px;
+                        border-radius: 4px;
+                        border: 1px solid #657786;
+                    }
                 }
             }
 

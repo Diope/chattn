@@ -3,11 +3,14 @@ import Router from "vue-router";
 import firebase from "firebase";
 const fb = require("./FirebaseConfig");
 
-import Timeline from "./components/Timeline.vue";
-import Login from "./components/Login.vue";
-import Settings from "./components/Settings.vue";
-import UserProfile from "./components/UserProfile.vue";
-import PageNotFound from "./components/PageNotFound.vue";
+import Timeline from "@/components/Timeline";
+import Login from "@/components/Login";
+import ViewPost from "@/components/ViewPost";
+import Settings from "@/components/Settings";
+import UserProfile from "@/components/UserProfile";
+import PageNotFound from "@/components/PageNotFound";
+// import Home from "@/components/Home";
+// import SinglePost from "@/components/SinglePost";
 
 Vue.use(Router);
 
@@ -16,11 +19,12 @@ const router = new Router({
   routes: [
     {
       path: "*",
-      name: PageNotFound,
+      name: "PageNotFound",
       component: PageNotFound
     },
     {
       path: "/",
+      name: "Timeline",
       component: Timeline,
       meta: {
         requiresAuth: true
@@ -48,9 +52,18 @@ const router = new Router({
       }
     },
     {
-      path: "/u/:id",
+      path: "/:handle",
       name: "UserProfile",
       component: UserProfile,
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/:handle/status/:postId",
+      name: "ViewPost",
+      component: ViewPost,
       meta: {
         requiresAuth: true
       }

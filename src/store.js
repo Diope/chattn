@@ -73,14 +73,18 @@ fb.auth.onAuthStateChanged(user => {
   }
 });
 
+
+
 export const store = new Vuex.Store({
   state: {
     currentUser: null,
     userProfile: {},
     posts: [],
+    comments: [],
     hiddenPosts: [],
     requestedUser: {},
-    userPosts: []
+    userPosts: [],
+    singlePostComments: {}
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -156,9 +160,11 @@ export const store = new Vuex.Store({
             .then(docs => {
               docs.forEach(doc => {
                 fb.commentsCollection.doc(doc.id).update({
-                  displayName: displayName,
-                  handle: handle,
-                  location: location
+                  user: {
+                    displayName: displayName,
+                    handle: handle,
+                    location: location
+                  }
                 });
               });
             });
@@ -167,7 +173,35 @@ export const store = new Vuex.Store({
           console.log(err);
         });
     },
-    finduserPosts({ commit, state }) {}
+    // addComment({commit, state}, data) {
+    //   const postId = this.comment.postId;
+    //   const postCommentCount = this.comment.postCommentCount;
+
+    //   console.log(data)
+
+    //   fb.commentsCollection
+    //     .add({
+    //       postId: postId,
+    //       content: this.comment.content,
+    //       userId: this.currentUser.uid,
+    //       handle: this.userProfile.handle,
+    //       displayName: this.userProfile.displayName,
+    //       createdOn: new Date()
+    //     })
+    //     .then(doc => {
+    //       fb.postCollection
+    //         .doc(postId)
+    //         .update({
+    //           comments: postCommentCount + 1
+    //         })
+    //         .then(() => {
+    //           this.closeCommentPane();
+    //         });
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //     });
+    // }
   },
   mutations: {
     setCurrentUser(state, value) {
@@ -178,6 +212,9 @@ export const store = new Vuex.Store({
     },
     setPosts(state, value) {
       state.posts = value;
+    },
+    setComments(state, value) {
+      state.comments = value;
     },
     setRequestedProfile(state, value) {
       state.requestedUser = value;
@@ -197,3 +234,4 @@ export const store = new Vuex.Store({
     }
   }
 });
+

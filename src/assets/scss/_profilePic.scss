@@ -17,5 +17,23 @@ transition.fade{
     border: 1px solid black;
     border-radius: 50%;
     overflow: hidden;
-    
+}
+
+.postPicWrapper {
+    display: flex;
+    flex-direction: column;
+    box-direction: normal;
+    box-orient: vertical;
+    box-align: stretch;
+    margin: 0 8px 0 8px !important;
+    cursor: pointer;
+}
+.postPhotoContainer {
+    max-height: 80px;
+    max-width: 80px;
+    background: blue;
+    border: 1px solid black;
+    border-radius: 50%;
+    display: inline-block;
+    overflow: hidden;
 }
