@@ -79,7 +79,7 @@ export default {
     },
     methods: {
         updateProfile() {
-            this.$store.dispatch('updateProfile', {
+            this.$store.dispatch('updateProfile', { // data that is received in the action on store ({context, state}, data)
                 displayName: this.displayName !== '' ? this.displayName : this.userProfile.displayName,
                 handle: this.handle !== '' ? this.handle : this.userProfile.handle,
                 location: this.location !== '' ? this.location : this.userProfile.location,

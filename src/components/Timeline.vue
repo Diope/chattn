@@ -202,30 +202,16 @@ export default {
       this.showCommentPane = false;
     },
     addComment() {
-      const postId = this.comment.postId;
-      const postCommentCount = this.comment.postCommentCount;
+      const {postId, postCommentCount, content} = this.comment
       const {handle, displayName, profilePic} = this.userProfile
-
-      fb.commentsCollection
-        .add({
-          userId:this.currentUser.uid,
-          postId: postId,
-          content: this.comment.content,
-          user: {profilePic, handle, displayName},
-          createdOn: new Date()
-        })
-        .then(doc => {
-          fb.postCollection
-            .doc(postId)
-            .update({
-              comments: postCommentCount + 1
-            })
-            .then(() => {
-              this.closeCommentPane();
-            });
-        })
-        .catch(err => {
-          console.log(err);
+      this.$store.dispatch('SAVE_COMMENT', {
+        userId: this.currentUser.uid,
+        postId: postId,
+        content: content,
+        createdOn: new Date(),
+        user: {handle, displayName, profilePic}
+      }).then(() => {
+          this.closeCommentPane();
         });
     },
     // viewPosts(post) {

@@ -160,31 +160,16 @@ export default {
     },
     addComment() {
       const {handle, displayName, postId, profilePic} = this.$props
-      const pId = postId;
       const postCommentCount = this.comment.postCommentCount = this.postComments.length
-
-      fb.commentsCollection
-        .add({
-          userId:this.currentUser.uid,
-          postId,
-          content: this.comment.content,
-
-          user: { handle, displayName, profilePic},
-          createdOn: new Date()
-        })
-        .then(doc => {
-          fb.postCollection
-            .doc(postId)
-            .update({
-              comments: postCommentCount + 1
-            })
-            .then(() => {
-              this.comment.content = ''
-            });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('SAVE_COMMENT', {
+        userId: this.currentUser.uid,
+        postId: postId,
+        content: this.comment.content,
+        createdOn: new Date(),
+        postComment: postCommentCount,
+        user: {handle, displayName, profilePic}
+      })
+      this.comment.content = ''      
     },
   }
 };

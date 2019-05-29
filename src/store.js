@@ -86,6 +86,7 @@ export const store = new Vuex.Store({
     userPosts: [],
     singlePostComments: {}
   },
+  getters: {},
   actions: {
     fetchUserProfile({ commit, state }) {
       fb.userCollection
@@ -173,35 +174,28 @@ export const store = new Vuex.Store({
           console.log(err);
         });
     },
-    // addComment({commit, state}, data) {
-    //   const postId = this.comment.postId;
-    //   const postCommentCount = this.comment.postCommentCount;
+    SAVE_COMMENT: async ({commit, state}, data) => {
+      const { userId, postId, content, createdOn, postComment, user } = data;
+      // const postId = this.comment.postId;
+      // const postCommentCount = this.comment.postCommentCount;
 
-    //   console.log(data)
-
-    //   fb.commentsCollection
-    //     .add({
-    //       postId: postId,
-    //       content: this.comment.content,
-    //       userId: this.currentUser.uid,
-    //       handle: this.userProfile.handle,
-    //       displayName: this.userProfile.displayName,
-    //       createdOn: new Date()
-    //     })
-    //     .then(doc => {
-    //       fb.postCollection
-    //         .doc(postId)
-    //         .update({
-    //           comments: postCommentCount + 1
-    //         })
-    //         .then(() => {
-    //           this.closeCommentPane();
-    //         });
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
+      fb.commentsCollection
+        .add({
+          postId: postId,
+          content: content,
+          userId: userId,
+          user: user,
+          createdOn: createdOn
+        })
+        .then(doc => {
+          fb.postCollection.doc(postId).update({
+            comments: postComment + 1
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   },
   mutations: {
     setCurrentUser(state, value) {
