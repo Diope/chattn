@@ -18,6 +18,7 @@
                         </div>
                         <div v-else class="profilePhotoContainer" @click="$refs.profilePicButton.click()">
                             <img src="../assets/images/default.png" style="height: 100%; width: 100%; object-fit: cover" />
+                            <input type="file" accept="image/*" :multiple="false" @change="detectFiles($event)" ref="profilePicButton" style="display: none">
                         </div>
                     <transition name="fade">
                         <div v-if="uploadEnd" class="success"><p>Profile Picture has been uploaded</p></div>

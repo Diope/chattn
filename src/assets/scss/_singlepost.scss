@@ -1,6 +1,6 @@
 #SinglePost {
     width: 70%;
-    margin: 5vh auto 0;
+    margin: 5vh auto 5vh;
     background: white;
     .post {
         border: 1px solid #e6ecf0;
@@ -10,7 +10,7 @@
         background: $white;
     
         &:hover {
-            background: #f5f8fa;
+            // background: #f5f8fa;
         }
     
         &:last-of-type {
@@ -43,6 +43,7 @@
         .flexWrap {
             display: flex;
             flex-wrap: wrap;
+            margin-bottom: 2.5rem;
     
             .postMain {
                 margin: 0 5px 0 5px;
@@ -72,6 +73,7 @@
                         }
                         .postText {
                             padding-bottom: 1rem;
+                            font-size: 1.4rem;
                         }
                     }
                     .postImage {
@@ -104,6 +106,17 @@
             }
             .bottomButton {
                 display: inline-block;
+            }
+        }
+        .comment__container {
+            margin-bottom: 2rem;
+            .comment__textarea {
+                margin-bottom: 1.5rem;
+            }
+        }
+        .comment__pane {
+            .comment__user-text {
+                font-size: 1rem;
             }
         }
     }

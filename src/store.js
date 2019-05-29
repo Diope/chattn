@@ -126,7 +126,7 @@ export const store = new Vuex.Store({
             .then(docs => {
               docs.forEach(doc => {
                 fb.commentsCollection.doc(doc.id).update({
-                  profilePic: profilePic
+                  user: { profilePic: profilePic }
                 });
               });
             });

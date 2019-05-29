@@ -25,8 +25,8 @@
                 <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
               </div>
             </form>
-            <div class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}%</div>
           </div>
+        <div class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}</div>
         </div>
       </div>
 
@@ -45,6 +45,7 @@
             <div class="flexWrap">
               <div class="profilePicWrapper">
                 <router-link :to="{name: 'UserProfile', params: {handle: post.handle}}">
+                  
                   <div v-if="post.profilePic !== null" class="profilePhotoContainer">
                     <img
                       :src="post.profilePic"
@@ -84,25 +85,6 @@
                     </router-link>
                   </div>
 
-                  <!-- <div v-if="showCommentPane" class="c-modal">
-                    <div class="c-container">
-    
-                    <a @click="closeCommentPane">
-                      <i class="fas fa-times"></i>
-                    </a>
-                    <p>Add a Comment</p>
-                    <form @submit.prevent>
-                      <textarea
-                        cols="30"
-                        rows="10"
-                        v-model="comment.content"
-                        placeholder="What's happening?"
-                      ></textarea>
-                      <button @click="addComment" :disabled="comment.content === ''" class="button">Reply</button>
-                    </form>
-                  </div>
-                </div> -->
-
                 </div>
                 <div class="bottomButton">
                   <ul>
@@ -128,7 +110,25 @@
         <div v-else>
           <p class="no-results">There are currently no posts</p>
         </div>
+        <div v-if="showCommentPane" class="c-modal">
+          <div class="c-container">
 
+          <a @click="closeCommentPane">
+            <i class="fas fa-times"></i>
+          </a>
+
+          <p>Add a Comment</p>
+            <form @submit.prevent>
+              <textarea
+                cols="30"
+                rows="10"
+                v-model="comment.content"
+                placeholder="What's happening?"
+              ></textarea>
+              <button @click="addComment" :disabled="comment.content === ''" class="button">Reply</button>
+            </form>
+          </div>
+        </div>
       </div>
       
     </section>
@@ -204,13 +204,14 @@ export default {
     addComment() {
       const postId = this.comment.postId;
       const postCommentCount = this.comment.postCommentCount;
-      const {handle, displayName} = this.userProfile
+      const {handle, displayName, profilePic} = this.userProfile
 
       fb.commentsCollection
         .add({
+          userId:this.currentUser.uid,
           postId: postId,
           content: this.comment.content,
-          user: {userId:this.currentUser.uid, handle, displayName},
+          user: {profilePic, handle, displayName},
           createdOn: new Date()
         })
         .then(doc => {

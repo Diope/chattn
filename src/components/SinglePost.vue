@@ -2,83 +2,70 @@
     <div id="SinglePost" v-if="displayName !== undefined">
 
       <div class="post">
-        <div class="flexWrap">
-          <div class="profilePicWrapper">
-            <router-link :to="`/${handle}`">
-              <div v-if="profilePic !== null" class="profilePhotoContainer">
-                <img :src="profilePic" style="height: 100%; width: 100%; object-fit: cover">
-              </div>
-              <div v-else class="profilePhotoContainer">
-                <img
-                  src="../assets/images/default.png"
-                  style="height: 100%; width: 100%; object-fit: cover"
-                >
-              </div>
-            </router-link>
-          </div>
+        <AvatarDisplay
+          :userHandle="handle"
+          :userDisplay="displayName"
+          :userProfilePic="profilePic"
+          :userCreated="createdOn"
+          :userPostPhoto="tweetPic"
+          :postCount="postComments.length"
+          :postId="postId"
+          :likes="likes"
+          :userContent="content"
+        >
 
-          <div class="postMain">
-            <div class="postContainer">
-              <div class="postContent">
-                <div class="userDisplay">
-                  <router-link :to="`/${handle}`">
-                    <span class="displayName">
-                      {{displayName}}
-                      <p>{{'@' + handle}}</p> ・ 
-                      <p class="timeAgo">{{createdOn | formatDate }}</p>
-                    </span>
-                  </router-link>
-                </div>
+        </AvatarDisplay>
+        
 
-                <div class="postText">{{content}}</div>
-              </div>
-
-              <div v-if="tweetPic !== null" class="postImage">
-                <img :src="tweetPic" alt>
-              </div>
-            </div>
-            <div class="bottomButton">
-              <ul>
-                <li>
-                  <!-- <a @click="openComments(post)"> -->
-                    <i class="fas fa-comment"></i>
-                    {{postComments.length}}
-                  <!-- </a> -->
-                </li>
-                <li>
-                  <a @click="likePost(postId, likes)">
-                    <i class="fas fa-heart"></i>
-                    {{likes}}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-    </div>
-
-    <div class="c-container">
+    <div class="comment__container">
       <form @submit.prevent>
+      <div class="comment__textarea">
         <textarea
           cols="30"
           rows="10"
           v-model="comment.content"
           placeholder="What's happening"
         ></textarea>
-        <button @click="addComment" :disabled="comment.content === ''" class="button">Reply</button>
+      </div>
+        <button @click="addComment" :disabled="comment.content === ''" class="button comment__button">Reply</button>
       </form>
     </div>
     <div v-show="postComments.length" class="comment_pane">
         <div :key="comment.id" v-for="comment in postComments" class="comments">
-          <div class="comment__user-display">{{comment.displayName}} {{'@' + comment.handle}} ・ {{comment.createdOn}}</div>
-          <div class="comment__user-text">{{comment.content}}</div>
+          <AvatarDisplay
+            :userProfilePic="comment.user.profilePic"
+            :userHandle="comment.user.handle"
+            :userDisplay="comment.user.displayName"
+            :userCreated="comment.createdOn"
+            :userContent="comment.content"
+          ></AvatarDisplay>
+          <!-- <div class="profilePicWrapper">
+            <div v-if="comment.user.profilePic" class="profilePhotoContainer">
+              <img :src="comment.user.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover">
+            </div>
+            <div v-else class="profilePhotoContainer">
+              <img src="../assets/images/default.png" alt="" style="height: 100%; width: 100%; object-fit: cover">
+            </div>
+          </div>
+
+
+          <span class="userDisplay">
+            <router-link :to="`/${comment.user.handle}`">
+              <span class="displayName">
+                {{comment.user.displayName}} {{'@' + comment.user.handle}}
+              </span> ・ {{comment.createdOn | formatDate}}
+            </router-link>
+          </span> -->
         </div>
     </div>
   </div>
+    </div>
+
+
   <div v-else class="col1">
     <div style="text-align: center; padding: 5rem; background: white; margin-top: 2.5rem; width: 70%; margin: 5vh auto 0;">
       <h2>Sorry, that page doesn’t exist!</h2>
-      <p>Why not try a search to find something else?</p>
+      <p><router-link to="/timeline"> Click here to return home</router-link></p>
     </div>
   </div>
   
@@ -88,8 +75,12 @@
 <script>
 import moment from "moment";
 import { mapState, mapActions } from "vuex";
+import AvatarDisplay from "./AvatarDisplay"
 const fb = require("../FirebaseConfig");
 export default {
+  components: {
+    AvatarDisplay
+  },
   data() {
     return {
       postComments: [],
@@ -168,15 +159,17 @@ export default {
         });
     },
     addComment() {
-      const {handle, displayName, postId} = this.$props
+      const {handle, displayName, postId, profilePic} = this.$props
       const pId = postId;
       const postCommentCount = this.comment.postCommentCount = this.postComments.length
 
       fb.commentsCollection
         .add({
+          userId:this.currentUser.uid,
           postId,
           content: this.comment.content,
-          user: {userId:this.currentUser.uid, handle, displayName},
+
+          user: { handle, displayName, profilePic},
           createdOn: new Date()
         })
         .then(doc => {
@@ -198,6 +191,13 @@ export default {
 </script>
 
 <style lang="scss">
+  .comments {
+    margin-bottom: 25px;
+  }
+
+  li .bottomButton .fas {
+    font-size: 1.2rem;
+  }
 
   
   

@@ -2,13 +2,13 @@
     <header>
         <section>
             <div class="col1">
-                <router-link to="timeline"><div class="title">Chattn</div></router-link>
+                <router-link to="/timeline" exact><div class="title">Chattn</div></router-link>
                 <ul class="inline">
                     <li>
                         <router-link to="/timeline" exact>Timeline</router-link>
                     </li>
                     <li>
-                        <router-link to="settings">Settings</router-link>
+                        <router-link to="settings" exact>Settings</router-link>
                     </li>
                     <li>
                         <a @click="logout">logout</a>
