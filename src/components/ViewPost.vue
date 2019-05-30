@@ -1,13 +1,13 @@
 <template>
   <SinglePost 
-    :profilePic="post.profilePic"
-    :displayName="post.displayName"
+    :profilePic="post.user.profilePic"
+    :displayName="post.user.displayName"
     :postId="this.$route.params.postId"
     :createdOn="post.createdOn"
     :tweetPic="post.tweetPic"
     :content="post.content"
     :userId="post.userId"
-    :handle="post.handle"
+    :handle="post.user.handle"
     :likes="post.likes"
     :commentCount="post.comments"
   ></SinglePost>
@@ -37,6 +37,7 @@ export default {
         .get()
         .then(post => {
           this.post = post.data();
+          console.log()
         });
     }
   }

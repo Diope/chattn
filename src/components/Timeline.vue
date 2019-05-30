@@ -9,7 +9,7 @@
           </div>
           <div class="create-post">
             <form @submit.prevent>
-              <textarea v-model.trim="post.content" cols="30" rows="10"></textarea>
+              <textarea v-model.trim="post.content" cols="30" rows="3"></textarea>
               <input
                 type="file"
                 accept="image/*"
@@ -30,7 +30,12 @@
         </div>
       </div>
 
+      <!-- TimeLine -->
+
       <div class="col2">
+
+        <!-- Show new Posts button -->
+
         <transition class="fade">
           <div v-if="hiddenPosts.length" @click="showNewPosts" class="hidden-posts">
             <p>
@@ -39,16 +44,18 @@
           </div>
         </transition>
 
+        <!-- Posts List -->
+
         <div v-if="posts.length">
           <div :key="post.id" v-for="post in posts" class="post">
 
             <div class="flexWrap">
               <div class="profilePicWrapper">
-                <router-link :to="{name: 'UserProfile', params: {handle: post.handle}}">
+                <router-link :to="{name: 'UserProfile', params: {handle: post.user.handle}}">
                   
-                  <div v-if="post.profilePic !== null" class="profilePhotoContainer">
+                  <div v-if="post.user.profilePic !== null" class="profilePhotoContainer">
                     <img
-                      :src="post.profilePic"
+                      :src="post.user.profilePic"
                       style="height: 100%; width: 100%; object-fit: cover"
                     >
                   </div>
@@ -65,31 +72,32 @@
                 <div class="postContainer">
                   <div class="postContent">
                     <div class="userDisplay">
-                      <router-link :to="{name: 'UserProfile', params: {handle: post.handle}}">
+                      <router-link :to="{name: 'UserProfile', params: {handle: post.user.handle}}">
                         <span class="displayName">
-                          {{post.displayName}}
-                          <p>{{'@' + post.handle}}</p> ・
+                          {{post.user.displayName}}
+                          <p>{{'@' + post.user.handle}}</p> ・
                           <p class="timeAgo">{{post.createdOn | formatDate }}</p>
                         </span>
                       </router-link>
                     </div>
-                    <router-link :to="{name: 'ViewPost', params: {handle: `${post.handle}`, postId: `${post.id}`}}">
+                    <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}">
                         <div class="postText">{{post.content}}</div>
                     </router-link>
                   </div>
 
                     
                   <div v-if="post.tweetPic !== null" class="postImage">
-                    <router-link :to="`${post.handle}/status/${post.id}`">
+                    <router-link :to="`${post.user.handle}/status/${post.id}`">
                       <img :src="post.tweetPic" alt>
                     </router-link>
                   </div>
 
                 </div>
+
                 <div class="bottomButton">
                   <ul>
                     <li>
-                      <a @click="openComments(post)">
+                      <a @click="addPostCommentPopup(post)">
                         <i class="fas fa-comment"></i>
                         {{post.comments}}
                       </a>
@@ -110,25 +118,45 @@
         <div v-else>
           <p class="no-results">There are currently no posts</p>
         </div>
-        <div v-if="showCommentPane" class="c-modal">
-          <div class="c-container">
 
-          <a @click="closeCommentPane">
-            <i class="fas fa-times"></i>
-          </a>
+        <div v-if="showCommentPopup" class="p-modal">
+          <div class="p-container">
+          <div class="close__pane">
+            <div class="close__button">
+              <a @click="closePostCommentPopup">
+                <i class="far fa-times-circle"></i>
+              </a>
+            </div>
 
-          <p>Add a Comment</p>
-            <form @submit.prevent>
+            <div class="close__button-reply">
+              <button @click="$refs.popUpReply.click()" :disabled="comment.content === ''" class="button">Reply</button>
+            </div>
+
+          </div>
+            <div class="post">
+
+            <AvatarDisplay
+              :userHandle="postPopup.user.handle"
+              :userDisplay="postPopup.user.displayName"
+              :userProfilePic="postPopup.user.profilePic"
+              :userContent="postPopup.content"
+              :userPostPhoto="postPopup.tweetPic"
+              :userCreated="postPopup.createdOn"
+            />
+
+            <form @submit.prevent class="postPopup">
               <textarea
                 cols="30"
                 rows="10"
                 v-model="comment.content"
-                placeholder="What's happening?"
+                placeholder="What's your reply?"
               ></textarea>
-              <button @click="addComment" :disabled="comment.content === ''" class="button">Reply</button>
+              <button @click="addComment" :disabled="comment.content === ''" class="button" ref="popUpReply" style="display: none;"></button>
             </form>
           </div>
-        </div>
+          </div>
+          </div>
+
       </div>
       
     </section>
@@ -138,9 +166,14 @@
 <script>
 import { mapState } from "vuex";
 import moment from "moment";
+import AvatarDisplay from './AvatarDisplay'
+
 const fb = require("../FirebaseConfig.js");
 
 export default {
+  components: {
+    AvatarDisplay
+  },
   data() {
     return {
       post: {
@@ -153,118 +186,69 @@ export default {
         userId: "",
         content: ""
       },
-      showCommentPane: false,
+      showCommentPopup: false,
       uploadTask: "",
       uploadEnd: false,
-      showPostsPane: false,
       progressUpload: 0,
-      fullPost: {},
-      postComments: []
+      postPopup: {}
     };
   },
   methods: {
     createPost() {
-      fb.postCollection
-        .add({
-          userId: this.currentUser.uid,
-          displayName: this.userProfile.displayName,
-          handle: this.userProfile.handle,
-          content: this.post.content,
-          comments: 0,
-          profilePic: this.userProfile.profilePic,
-          tweetPic: this.post.tweetPic,
-          likes: 0,
-          createdOn: new Date()
-        })
-        .then(ref => {
-          this.post.content = "";
-          this.post.tweetPic = "";
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      const {handle, displayName, profilePic, location} = this.userProfile
+      const {tweetPic, content} = this.post
+      this.$store.dispatch('ADD_POST', {
+        userId: this.currentUser.uid,
+        content,
+        tweetPic,
+        likes: 0,
+        comments: 0,
+        createdOn: new Date(),
+        user: {handle, displayName, profilePic, location}
+      })
+      this.post.content = "";
+      this.post.tweetPic = "";
+  
     },
     showNewPosts() {
       const updatedPosts = this.hiddenPosts.concat(this.posts);
       this.$store.commit("setHiddenPosts", null);
       this.$store.commit("setPosts", updatedPosts);
     },
-    openComments(post) {
-      this.comment.postId = post.id;
-      this.comment.userId = post.userId;
-      this.comment.postCommentCount = post.comments;
-      this.showCommentPane = true;
-    },
-    closeCommentPane() {
+    closePostCommentPopup() {
       this.comment.postId = "";
       this.comment.userId = "";
       this.comment.content = "";
-      this.showCommentPane = false;
+      this.showCommentPopup = false;
+    },
+    addPostCommentPopup(post) {
+      this.showCommentPopup = true;
+      this.postPopup = post;
+      this.comment.postId = post.id;
+      this.comment.userId = post.userId;
+      this.comment.postCommentCount = post.comments;  
+        
     },
     addComment() {
       const {postId, postCommentCount, content} = this.comment
       const {handle, displayName, profilePic} = this.userProfile
+      console.log(this.comment, this.userProfile)
       this.$store.dispatch('SAVE_COMMENT', {
         userId: this.currentUser.uid,
         postId: postId,
+        postComment: postCommentCount,
         content: content,
         createdOn: new Date(),
         user: {handle, displayName, profilePic}
       }).then(() => {
-          this.closeCommentPane();
+          this.closePostCommentPopup();
         });
     },
-    // viewPosts(post) {
-    //   fb.commentsCollection
-    //     .where("postId", "==", post.id)
-    //     .get()
-    //     .then(docs => {
-    //       let commentsArr = [];
-
-    //       docs.forEach(doc => {
-    //         const comment = doc.data();
-    //         comment.id = doc.id;
-    //         commentsArr.push(comment);
-    //       });
-
-    //       this.postComments = commentsArr;
-    //       this.fullPost = post;
-    //       this.showPostsPane = true;
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // },
-    closePostsPane() {
-      this.postComments = [];
-      this.showPostsPane = false;
-    },
-    likePost(postId, postLikes) {
+    likePost(postId, likes) {
       const docId = `${this.currentUser.uid}_${postId}`;
-
-      fb.likesCollection
-        .doc(docId)
-        .get()
-        .then(doc => {
-          if (doc.exists) {
-            return;
-          }
-
-          fb.likesCollection
-            .doc(docId)
-            .set({
-              postId: postId,
-              userId: this.currentUser.uid
-            })
-            .then(() => {
-              fb.postCollection.doc(postId).update({
-                likes: postLikes + 1
-              });
-            });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('ADD_LIKE', {
+        docId, postId, likes
+      })
     },
     detectFiles(e) {
       let fileList = e.target.files || e.dataTransfer.files;
@@ -274,15 +258,21 @@ export default {
     },
     upload(file) {
       const randomHex = Math.random()
-        .toString(16)
-        .slice(2, 8);
-      this.fileName = file.name;
+        .toString(17)
+        .slice(2, 14);
+      
+      const preFix = Math.random()
+        .toString(18)
+        .slice(2,5)
+
+      const timeStamp = moment(new Date()).format('YYYY')
+
       this.uploading = true;
       this.uploadTask = fb.storage
         .child(
           `${this.currentUser.uid}` +
-            "/tweet_images/" +
-            `${randomHex}_${file.name}`
+            "/tweet_images/" + `${timeStamp}` + "/" +
+            `${prefix}${randomHex}`
         )
         .put(file);
     }
@@ -335,4 +325,25 @@ export default {
   margin: 10px 0;
   background: #179bb5;
 }
+
+.close__pane {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 1rem;
+}
+
+.p-modal {
+  .p-container {
+    .post {
+      padding: 0;
+      border-bottom: none !important;
+    }
+  }
+}
+
+.postPopup {
+  margin-top: 2.5rem;
+}
+
 </style>

@@ -2,7 +2,7 @@
     <div class="flexWrap">
           <div class="profilePicWrapper">
             <router-link :to="`/${userHandle}`">
-              <div v-if="userProfilePic !== null || userProfilePic === ''" class="profilePhotoContainer">
+              <div v-if="userProfilePic !== null || userProfilePic !== ''" class="profilePhotoContainer">
                 <img :src="userProfilePic" style="height: 100%; width: 100%; object-fit: cover">
               </div>
               <div v-else class="profilePhotoContainer">
@@ -60,8 +60,14 @@
 
 <script>
 import moment from 'moment';
+import { mapState } from 'vuex';
+const fb = require('../FirebaseConfig')
 export default {
-    props: [
+
+  computed: {
+    ...mapState(['currentUser'])
+  },
+  props: [
       "postCount",
       "userHandle",
       "userDisplay",
@@ -79,6 +85,16 @@ export default {
       return moment(date).fromNow();
     }
   },
+  methods: {
+    likePost(postId, likes) {
+      const docId = `${this.currentUser.uid}_${postId}`;
+
+
+      this.$store.dispatch('ADD_LIKE', {
+        docId, postId, likes
+      })
+    }
+  }
 
 }
 </script>

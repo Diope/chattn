@@ -38,7 +38,7 @@
                 <input type="url" v-model.trim="website" :placeholder="userProfile.website" id="website" >
 
                 <label for="birth">Birth Date</label>
-                <input type="date" v-model="birth" :placeholder="userProfile.birth" id="birth" >
+                <input type="date" v-model.number="birth" :placeholder="userProfile.birth" id="birth" >
 
                 <label for="bio">About Me</label>
                 <textarea v-model.trim="bio" :placeholder="userProfile.bio" id="bio" />

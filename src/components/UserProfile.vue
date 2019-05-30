@@ -17,16 +17,16 @@
                     </div>
 
                         <h3>{{requestedUser.displayName}}</h3>
-                        <span class="profile__handle" v-if="requestedUser.handle === undefined"><h5>{{'@' + this.$route.params.handle}}</h5></span>
+                        <span class="profile__handle" v-if="requestedUser.handle === null"><h5>{{'@' + this.$route.params.handle}}</h5></span>
                         <span v-else>{{'@' + requestedUser.handle}}</span>
                         <div class="userBio">{{requestedUser.bio}}</div>
                         <div class="userMeta">
-                            <p class="metaItem"><i v-if="requestedUser.location !== undefined" class="fas fa-map-marker-alt"></i> {{requestedUser.location}}</p>
-                            <p class="metaItem"><i class="fas fa-link" v-if="requestedUser.website !== undefined"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a></p>
-                            <p class="metaItem"><i class="fas fa-birthday-cake" v-if="requestedUser.birth !== undefined"></i> {{requestedUser.birth | birthDate}}</p>
-                            <p class="metaItem"><i class="fas fa-calendar-alt" v-if="requestedUser.createdOn !== undefined"></i> {{requestedUser.createdOn | joinDate}}</p>
+                            <p class="metaItem"><i v-if="requestedUser.location !== null" class="fas fa-map-marker-alt"></i> {{requestedUser.location}}</p>
+                            <p class="metaItem"><i class="fas fa-link" v-if="requestedUser.website !== null"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a></p>
+                            <p class="metaItem"><i class="fas fa-birthday-cake" v-if="requestedUser.birth !== null"></i> {{requestedUser.birth | birthDate}}</p>
+                            <p class="metaItem"><i class="fas fa-calendar-alt" v-if="requestedUser.createdOn !== null"></i> {{requestedUser.createdOn | joinDate}}</p>
                         </div>
-                        <div style="text-align: center;" v-if="requestedUser.handle === undefined">
+                        <div style="text-align: center;" v-if="requestedUser.handle === null">
                             <h2>This account doesn’t exist</h2>
                             <p>Try searching for another.</p>
                         </div>
@@ -35,7 +35,7 @@
                 <div v-show="userPosts.length" class="profile__posts-pane">
                     <div :key="post.id" v-for="post in userPosts" class="profile__userPosts">
                         <div class="userDisplay">
-                            <span class="displayName">{{post.displayName}}</span><p>{{'@' + post.handle}} ・ {{post.createdOn | formatDate}}</p>
+                            <span class="displayName">{{post.user.displayName}}</span><p>{{'@' + post.user.handle}} ・ {{post.createdOn | formatDate}}</p>
                         </div>
                         <div>
                             {{post.content}}
@@ -64,31 +64,26 @@ export default {
         this.findUserPosts()
     },
     computed: {
-        ...mapState(['currentUser', 'userkey'])
+        ...mapState(['currentUser'])
     },
     methods: {
         fetchUser() {
             let user = this.$route.params.handle
             fb.userCollection.where("handle", "==", user).get().then(docs => {
                 docs.forEach(doc => {
-                    console.log(doc.exists)
                     if (doc.exists !== true) this.$router.push({name: "PageNotFound"})
                     this.requestedUser = doc.data();
                 })
-                
-                // if (res.exists === false) {
-                //     this.$router.push({name: "notFound"})
-                // }
-                // this.$store.commit('setRequestedProfile', res.data())
             })
         },
         findUserPosts() {
             let user = this.$route.params.handle
-            fb.postCollection.orderBy('createdOn', 'desc').where('handle', '==', user).get().then(docs => {
+            fb.postCollection.where('user.handle', '==', user).get().then(docs => {
                     let postsArr = []
 
                     docs.forEach(doc => {
                         const post = doc.data()
+                        console.log(doc.data())
                         post.id = doc.id
                         postsArr.push(post)
                     })

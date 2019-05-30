@@ -73,8 +73,6 @@ fb.auth.onAuthStateChanged(user => {
   }
 });
 
-
-
 export const store = new Vuex.Store({
   state: {
     currentUser: null,
@@ -174,7 +172,7 @@ export const store = new Vuex.Store({
           console.log(err);
         });
     },
-    SAVE_COMMENT: async ({commit, state}, data) => {
+    SAVE_COMMENT: async ({ commit, state }, data) => {
       const { userId, postId, content, createdOn, postComment, user } = data;
       // const postId = this.comment.postId;
       // const postCommentCount = this.comment.postCommentCount;
@@ -191,6 +189,51 @@ export const store = new Vuex.Store({
           fb.postCollection.doc(postId).update({
             comments: postComment + 1
           });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    ADD_POST: async ({ commit }, data) => {
+      const {
+        userId,
+        content,
+        tweetPic,
+        likes,
+        comments,
+        createdOn,
+        user
+      } = data;
+      fb.postCollection.add({
+        userId,
+        likes,
+        content,
+        comments,
+        tweetPic,
+        user,
+        createdOn
+      });
+    },
+    ADD_LIKE: async ({ commit, state }, data) => {
+      const { docId, postId, likes } = data;
+      fb.likesCollection
+        .doc(docId)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            return;
+          }
+          fb.likesCollection
+            .doc(docId)
+            .set({
+              postId: postId,
+              userId: state.currentUser.uid
+            })
+            .then(() => {
+              fb.postCollection.doc(postId).update({
+                likes: likes + 1
+              });
+            });
         })
         .catch(err => {
           console.log(err);
@@ -228,4 +271,3 @@ export const store = new Vuex.Store({
     }
   }
 });
-

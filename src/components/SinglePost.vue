@@ -131,33 +131,7 @@ export default {
           console.log(this.postComments);
         })
     },
-    likePost(postId, postLikes) {
-      const docId = `${this.currentUser.uid}_${postId}`;
-
-      fb.likesCollection
-        .doc(docId)
-        .get()
-        .then(doc => {
-          if (doc.exists) {
-            return;
-          }
-
-          fb.likesCollection
-            .doc(docId)
-            .set({
-              postId: postId,
-              userId: this.currentUser.uid
-            })
-            .then(() => {
-              fb.postCollection.doc(postId).update({
-                likes: postComments + 1
-              });
-            });
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
+    
     addComment() {
       const {handle, displayName, postId, profilePic} = this.$props
       const postCommentCount = this.comment.postCommentCount = this.postComments.length
