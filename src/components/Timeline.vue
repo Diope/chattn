@@ -87,9 +87,9 @@
 
                     
                   <div v-if="post.tweetPic !== null" class="postImage">
-                    <router-link :to="`${post.user.handle}/status/${post.id}`">
+                    <a @click="openImagePanePopup(post)">
                       <img :src="post.tweetPic" alt>
-                    </router-link>
+                    </a>
                   </div>
 
                 </div>
@@ -155,10 +155,18 @@
             </form>
           </div>
           </div>
-          </div>
+        </div>
 
-      </div>
-      
+        <div v-if="showImagePanePopup" class="p-modal">
+          <ImagePanePopup
+            :tweetPic="postPopup.tweetPic"
+            :close="closeImagePanePopup"
+            :imageCaption="postPopup.content"
+          />
+        </div>
+
+      <!-- end of -->
+      </div>   
     </section>
   </div>
 </template>
@@ -167,12 +175,14 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import AvatarDisplay from './AvatarDisplay'
+import ImagePanePopup from './ImagePanePopup'
 
 const fb = require("../FirebaseConfig.js");
 
 export default {
   components: {
-    AvatarDisplay
+    AvatarDisplay,
+    ImagePanePopup
   },
   data() {
     return {
@@ -187,6 +197,7 @@ export default {
         content: ""
       },
       showCommentPopup: false,
+      showImagePanePopup: false,
       uploadTask: "",
       uploadEnd: false,
       progressUpload: 0,
@@ -227,7 +238,13 @@ export default {
       this.comment.postId = post.id;
       this.comment.userId = post.userId;
       this.comment.postCommentCount = post.comments;  
-        
+    },
+    openImagePanePopup(post){
+      this.showImagePanePopup = true;
+      this.postPopup = post;
+    },
+    closeImagePanePopup() {
+      this.showImagePanePopup = false;
     },
     addComment() {
       const {postId, postCommentCount, content} = this.comment
