@@ -64,10 +64,6 @@ export default {
             color: white;
             align-items: center;
             padding: 1rem;
-
-            p {
-
-            }
         }
     }
 

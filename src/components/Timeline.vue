@@ -80,7 +80,7 @@
                         </span>
                       </router-link>
                     </div>
-                    <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}">
+                    <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}" style="">
                         <div class="postText">{{post.content}}</div>
                     </router-link>
                   </div>
