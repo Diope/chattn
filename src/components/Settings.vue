@@ -55,6 +55,7 @@
 
 <script>
 import {mapState} from 'vuex'
+import {url, maxLength, minLength} from 'vuelidate/lib/validators'
 import { setTimeout } from 'timers';
 const fb = require('../FirebaseConfig');
 
@@ -74,14 +75,20 @@ export default {
             uploadTask: ''
         }
     },
+    validations: {
+        displayName: {minLength: minLength(3), maxLength: maxLength(20)},
+        handle: {minLength: minLength(3), maxLength: maxLength(20)},
+        website: {url}
+    },
     computed: {
         ...mapState(['userProfile'])
     },
     methods: {
         updateProfile() {
+            const formattedHandle = this.signupForm.handle.replace(/ /g,"_")
             this.$store.dispatch('updateProfile', { // data that is received in the action on store ({context, state}, data)
                 displayName: this.displayName !== '' ? this.displayName : this.userProfile.displayName,
-                handle: this.handle !== '' ? this.handle : this.userProfile.handle,
+                handle: this.handle !== '' ? formattedHandle : this.userProfile.handle,
                 location: this.location !== '' ? this.location : this.userProfile.location,
                 bio: this.bio !== '' ? this.bio : this.userProfile.bio,
                 website: this.website !== '' ? this.website : this.userProfile.website,
@@ -113,8 +120,10 @@ export default {
             this.fileName = file.name
             this.uploading = true
             this.uploadTask = fb.storage.child(`${this.userProfile.userId}` + '/profile_picture/' + file.name).put(file)
+        },
+        spacesReplace(handle) {
+            return handle.replace(/ /g,"_")
         }
-        
     },
     watch: {
         uploadTask: function () {

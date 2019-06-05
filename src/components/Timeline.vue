@@ -5,7 +5,12 @@
         <div class="profile">
           <div class="userDisplay">
             <div class="postPhotoContainer">
-              <img :src="userProfile.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover" >
+              <div v-if="userProfile.profilePic">
+                <img :src="userProfile.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover" >
+              </div>
+              <div v-else>
+                <img src="../assets/images/default.png" alt="" style="height: 100%; width: 100%; object-fit: cover">
+              </div>
             </div>
             <div style="margin-left: 8px;">
               <span class="displayName">{{userProfile.displayName}}</span>

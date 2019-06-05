@@ -140,11 +140,12 @@ export default {
         },
         signup() {
             this.performingRequest = true
+            const formattedHandle = this.signupForm.handle.replace(/ /g,"_")
             fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(user => {
                 this.$store.commit('setCurrentUser', user.user)
 
                 fb.userCollection.doc(user.user.uid).set({
-                    handle: spacesReplace(this.signupForm.handle),
+                    handle: formattedHandle,
                     displayName: this.signupForm.displayName,
                     email: this.signupForm.email,
                     userId: user.user.uid,
