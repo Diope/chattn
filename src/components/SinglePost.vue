@@ -13,7 +13,6 @@
           :likes="likes"
           :userContent="content"
         >
-
         </AvatarDisplay>
         
 
@@ -149,7 +148,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" >
   .comments {
     margin-bottom: 25px;
   }
@@ -158,6 +157,16 @@ export default {
     font-size: 1.2rem;
   }
 
-  
+  .postPopup, .comment__textarea {
+    margin-top: 2.5rem;
+    textarea {
+      border: 1px solid #e6ecf0;
+      outline: 0;
+      height: 100px;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+  }
+}
   
 </style>

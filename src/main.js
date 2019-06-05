@@ -1,17 +1,17 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import Vuelidate from "vuelidate";
+
 import { store } from "./store";
-import { sync } from 'vuex-router-sync'
-
+import { sync } from "vuex-router-sync";
 import "./assets/scss/main.scss";
-
 const fb = require("./FirebaseConfig.js");
 
 Vue.config.productionTip = false;
 
 let app;
-
+Vue.use(Vuelidate);
 // eslint-disable-next-line no-unused-vars
 fb.auth.onAuthStateChanged(user => {
   if (!app) {

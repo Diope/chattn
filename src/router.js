@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
 import firebase from "firebase";
-const fb = require("./FirebaseConfig");
 
 import Timeline from "@/components/Timeline";
 import Login from "@/components/Login";

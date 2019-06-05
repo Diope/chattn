@@ -4,12 +4,18 @@
       <div class="col1">
         <div class="profile">
           <div class="userDisplay">
-            <span class="displayName">{{userProfile.displayName}}</span>
-            <p>{{'@' + userProfile.handle}}</p>
+            <div class="postPhotoContainer">
+              <img :src="userProfile.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover" >
+            </div>
+            <div style="margin-left: 8px;">
+              <span class="displayName">{{userProfile.displayName}}</span>
+              <p>{{'@' + userProfile.handle}}</p>
+            </div>
           </div>
           <div class="create-post">
+            
             <form @submit.prevent>
-              <textarea v-model.trim="post.content" cols="30" rows="3"></textarea>
+                <chattbox v-model="post.content" @blur="$v.post.content.$touch()"></chattbox>
               <input
                 type="file"
                 accept="image/*"
@@ -18,15 +24,16 @@
                 ref="tweetImage"
                 style="display: none"
               >
+        
               <div class="postButtons">
                 <div class="photoButtonWrapper" @click="$refs.tweetImage.click()">
                   <i class="fas fa-camera-retro"></i>
                 </div>
-                <button @click="createPost" :disabled="post.content == ''" class="button">Chatt</button>
+                <button @click="createPost" :disabled="post.content == '' || post.content.length > 280" class="button">Chatt</button>
               </div>
             </form>
           </div>
-        <div class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}</div>
+        <div v-show="progressUpload" class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}</div>
         </div>
       </div>
 
@@ -174,16 +181,22 @@
 <script>
 import { mapState } from "vuex";
 import moment from "moment";
+
 import AvatarDisplay from './AvatarDisplay'
 import ImagePanePopup from './ImagePanePopup'
+import Chattbox from './ChattBox';
+
 
 const fb = require("../FirebaseConfig.js");
 
 export default {
+  name: `Timeline`, //OMG I just discovered $options.name for easier CSS naming
   components: {
     AvatarDisplay,
-    ImagePanePopup
+    ImagePanePopup,
+    Chattbox
   },
+  
   data() {
     return {
       post: {
@@ -201,25 +214,35 @@ export default {
       uploadTask: "",
       uploadEnd: false,
       progressUpload: 0,
-      postPopup: {}
+      postPopup: {},
+      err_message: ""
     };
   },
+  computed: {
+    
+  },
   methods: {
-    createPost() {
-      const {handle, displayName, profilePic, location} = this.userProfile
-      const {tweetPic, content} = this.post
-      this.$store.dispatch('ADD_POST', {
-        userId: this.currentUser.uid,
-        content,
-        tweetPic,
-        likes: 0,
-        comments: 0,
-        createdOn: new Date(),
-        user: {handle, displayName, profilePic, location}
-      })
-      this.post.content = "";
-      this.post.tweetPic = "";
+    
   
+    createPost() {
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.err_message = 'ERROR'
+      } else {
+        const {handle, displayName, profilePic, location} = this.userProfile
+        const {tweetPic, content} = this.post
+        this.$store.dispatch('ADD_POST', {
+          userId: this.currentUser.uid,
+          content,
+          tweetPic,
+          likes: 0,
+          comments: 0,
+          createdOn: new Date(),
+          user: {handle, displayName, profilePic, location}
+        })
+        this.post.content = "";
+        this.post.tweetPic = "";
+      }
     },
     showNewPosts() {
       const updatedPosts = this.hiddenPosts.concat(this.posts);
@@ -289,7 +312,7 @@ export default {
         .child(
           `${this.currentUser.uid}` +
             "/tweet_images/" + `${timeStamp}` + "/" +
-            `${prefix}${randomHex}`
+            `${preFix}${randomHex}`
         )
         .put(file);
     }
@@ -359,8 +382,18 @@ export default {
   }
 }
 
-.postPopup {
-  margin-top: 2.5rem;
+.profile {
+  .userDisplay {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  .postPhotoContainer {
+      max-height: 40px;
+      max-width: 40px;
+  }
 }
+
+
 
 </style>

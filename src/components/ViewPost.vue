@@ -37,8 +37,9 @@ export default {
         .get()
         .then(post => {
           this.post = post.data();
-          console.log()
-        });
+        }).catch(err => {
+          console.log(err.message)
+        })
     }
   }
 };

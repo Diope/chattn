@@ -122,10 +122,11 @@ section {
 }
 
 .error-msg {
-	margin-top: 1rem;
+	margin: 1rem 0;
 	text-align: center;
 	p {
 		color: $error;
+		font-size: 1rem;
 		margin: 0;
 	}
 }
@@ -193,16 +194,6 @@ form {
 			box-shadow: 0 0 5px 0 rgba($dark, 0.2);
 		}
 	}
-
-    textarea {
-        resize: none;
-        border: 1px solid #e6ecf0;
-        outline: 0;
-        height: 100px;
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-    }
 }
 // transitions
 .fade-enter-active {

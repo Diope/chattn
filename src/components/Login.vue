@@ -34,10 +34,31 @@
             <form v-else @submit.prevent>
                 <h1>Sign Up</h1>
 
-                <input v-model.trim="signupForm.handle" type="text" placeholder="Your Chattn handle" id="handle" />
-                <input v-model.trim="signupForm.displayName" type="text" placeholder="Your display Name" id="displayName" />
-                <input v-model.trim="signupForm.email" type="email" placeholder="example@email.com" id="email2" />
-                <input v-model.trim="signupForm.password" type="password" placeholder="6 character minimum password" id="password2" />
+                <template v-if="$v.signupForm.handle.$error">
+                    <span v-if="!$v.signupForm.handle.required" style="font-size: 12px; color: #FDB6C1;">Chattn handle is required</span>
+                    <span v-if="!$v.signupForm.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
+                    <span v-if="!$v.signupForm.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                </template>
+                <input v-model.trim="signupForm.handle" type="text" placeholder="Your Chattn handle" id="handle" @blur="$v.signupForm.handle.$touch()"/>
+
+                <template v-if="$v.signupForm.displayName.$error">
+                    <span v-if="!$v.signupForm.displayName.required" style="font-size: 12px; color: #FDB6C1;">Chattn Display Name is required</span>
+                    <span v-if="!$v.signupForm.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
+                    <span v-if="!$v.signupForm.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                </template>
+                <input v-model.trim="signupForm.displayName" type="text" placeholder="Your display Name" id="displayName" @blur="$v.signupForm.displayName.$touch()"/>
+                
+                <template v-if="$v.signupForm.email.$error">
+                    <span v-if="!$v.signupForm.email.email" style="font-size: 12px; color: #FDB6C1;">Please provide a valid email</span>
+                    <span v-if="!$v.signupForm.email.required" style="font-size: 12px; color: #FDB6C1;">A valid email is required</span>
+                </template>
+                <input v-model.trim="signupForm.email" type="email" placeholder="example@email.com" id="email2" @blur="$v.signupForm.email.$touch()"/>
+                
+                <template v-if="$v.signupForm.password.$error">
+                    <span v-if="!$v.signupForm.password.minLength" style="font-size: 12px; color: #FDB6C1;">Password must be at least 6 characters</span>
+                    <span v-if="!$v.signupForm.password.required" style="font-size: 12px; color: #FDB6C1;">A password is required</span>
+                </template>
+                <input v-model.trim="signupForm.password" type="password" placeholder="6 character minimum password" id="password2" @blur="$v.signupForm.password.$touch()" />
 
                 <button @click="signup" class="button">Sign Up</button>
                 <div class="extras"><a @click="toggleForm">Back to Log In</a></div>
@@ -68,6 +89,7 @@
 </template>
 
 <script>
+import { required, maxLength, email, minLength } from 'vuelidate/lib/validators';
 const fb = require('../FirebaseConfig.js')
 export default {
     data() {
@@ -92,19 +114,26 @@ export default {
             err_message: ''
         }
     },
+    validations: {
+        signupForm: {
+            handle: { required, minLength: minLength(3), maxLength: maxLength(16)},
+            displayName: {required, minLength: minLength(1), maxLength: maxLength(16)},
+            email: {required, email},
+            password: {required, minLength: minLength(6)}
+        }
+    },
     methods: {
         login() {
             this.performingRequest = true;
-
             fb.auth.signInWithEmailAndPassword(this.loginForm.email, this.loginForm.password)
                 .then(user => {
-                    this.commit('setCurrentUser', user.user)
+                    this.$store.commit('setCurrentUser', user.user)
                     this.$store.dispatch('fetchUserProfile')
                     this.performingRequest = false
                     this.$router.push('/dashboard')
                 })
                 .catch(err => {
-                    console.log(err)
+                    // console.log(err)
                     this.performingRequest = false;
                     this.err_message = err.message
                 })
@@ -114,9 +143,8 @@ export default {
             fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(user => {
                 this.$store.commit('setCurrentUser', user.user)
 
-                // creates the user object, kinda like what I'm doing on drybbble...though easier bc I'm using firebase
                 fb.userCollection.doc(user.user.uid).set({
-                    handle: this.signupForm.handle,
+                    handle: spacesReplace(this.signupForm.handle),
                     displayName: this.signupForm.displayName,
                     email: this.signupForm.email,
                     userId: user.user.uid,
@@ -132,8 +160,8 @@ export default {
                     this.$router.push('/timeline')
                 }).catch(err => console.log(err))
             }).catch(err => {
-                console.log(err);
                 this.performingRequest = false;
+                this.err_message = err.message
             })
         },
         resetPass() {
@@ -164,6 +192,9 @@ export default {
                 this.showLoginForm = false
                 this.showForgotPassword = true
             }
+        },
+        spacesReplace(handle) {
+            return handle.replace(/ /g,"_")
         }
     }
     

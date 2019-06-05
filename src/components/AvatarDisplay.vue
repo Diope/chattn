@@ -30,10 +30,11 @@
                 <div class="postText">{{userContent}}</div>
               </div>
 
-              <div v-show="userPostPhoto !== undefined && userPostPhoto !== null" class="postImage">
-                <img :src="userPostPhoto" alt>
+              <div v-show="userPostPhoto" class="postImage">
+                  <img :src="userPostPhoto" alt>
               </div>
             </div>
+
             <div v-show="likes !== undefined" class="bottomButton">
               <ul>
                 <li>
@@ -54,13 +55,14 @@
                 </li>
               </ul>
             </div>
+
           </div>
         </div>
 </template>
 
 <script>
 import moment from 'moment';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 const fb = require('../FirebaseConfig')
 export default {
 
@@ -86,15 +88,18 @@ export default {
     }
   },
   methods: {
+    // ...mapActions(
+    //   {likePost: 'likePost'}
+    // ),
+
     likePost(postId, likes) {
       const docId = `${this.currentUser.uid}_${postId}`;
-
-
       this.$store.dispatch('ADD_LIKE', {
         docId, postId, likes
       })
     }
   }
+  
 
 }
 </script>

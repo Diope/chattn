@@ -83,14 +83,10 @@ export default {
 
                     docs.forEach(doc => {
                         const post = doc.data()
-                        console.log(doc.data())
                         post.id = doc.id
                         postsArr.push(post)
                     })
-
                     this.userPosts = postsArr
-            
-
                 }).catch(err => {
                     console.log(err)
                 })
