@@ -181,9 +181,6 @@ export default {
             this.uploading = true
             this.uploadTask = fb.storage.child(`${this.userProfile.userId}` + '/profile_picture/' + file.name).put(file)
         },
-        spacesReplace(handle) {
-            return handle.replace(/ /g,"_")
-        }
     },
     watch: {
         uploadTask: function () {
