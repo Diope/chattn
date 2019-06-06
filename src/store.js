@@ -103,8 +103,17 @@ export const store = new Vuex.Store({
       commit("setRequestedProfile", {});
       commit("setUserPosts");
     },
+    updateProfileBanner({ commit, state }, data) {
+      const { profileBanner, user } = data;
+      fb.userCollection
+        .doc(user)
+        .update({ profileBanner })
+        .catch(err => {
+          console.log(err.message);
+        });
+    },
     updateProfilePhoto({ commit, state }, data) {
-      const { profilePic } = data;
+      const { profilePic, profileBanner } = data;
       fb.userCollection
         .doc(state.currentUser.uid)
         .update({ profilePic })

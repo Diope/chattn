@@ -1,16 +1,18 @@
 <template>
     <section id="settings">
         <div class="col1">
-            <h3>Settings</h3>
+            <ProfileBanner></ProfileBanner>
 
             <transition name="fade">
                 <p v-if="showSuccess" class="success">Your profile has been updated</p>
             </transition>
+            <div class="profileHeader">
+
+            </div>
             
             <form @submit.prevent>
 
                 <div class="profilePicWrapper">
-                    <label for="profilePic">Profile Picture</label>
     
                         <div v-if="userProfile.profilePic !== null" class="profilePhotoContainer" @click="$refs.profilePicButton.click()">
                             <img :src="userProfile.profilePic" style="height: 100%; width: 100%; object-fit: cover"/>
@@ -115,9 +117,14 @@
 import {mapState} from 'vuex'
 import {url, maxLength, minLength, required} from 'vuelidate/lib/validators'
 import { setTimeout } from 'timers';
+import ProfileBanner from './ProfileBanner'
 const fb = require('../FirebaseConfig');
 
 export default {
+    name: `Settings`,
+    components: {
+        ProfileBanner
+    },
     data() {
         return {
             displayName: '',
@@ -179,7 +186,7 @@ export default {
         upload (file) {
             this.fileName = file.name
             this.uploading = true
-            this.uploadTask = fb.storage.child(`${this.userProfile.userId}` + '/profile_picture/' + file.name).put(file)
+            this.uploadTask = fb.storage.child(`${this.userProfile.userId}` + '/profile_pictures/' + file.name).put(file)
         },
     },
     watch: {
@@ -205,15 +212,38 @@ export default {
 </script>
 
 <style lang="scss">
+
+    @import '../assets/scss/global';
     
     #settings {
-        textarea {
-            border: 1px solid #e6ecf0;
-            outline: 0;
-            height: 100px;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
+        padding: 2rem 0;
+
+        .profilePhotoContainer {
+            max-height: 150px;
+            max-width: 150px;
+            background: gray;
+            border: 1px solid black;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 30;
+        }
+
+        .col1 {
+            max-width: 700px;
+            margin: 5vh auto 0;
+            background: $white;
+            padding: 0;
+        }
+        form {
+            margin: -3.5rem 2rem 2rem; 
+            textarea {
+                border: 1px solid #e6ecf0;
+                outline: 0;
+                height: 100px;
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+            }
         }
 
         .profilePicWrapper {
@@ -222,6 +252,10 @@ export default {
 
         .SettingInput.has-status-error {
             border-color: #FDB6C1
+        }
+
+        .button {
+            margin-top: 2rem;
         }
     }
 

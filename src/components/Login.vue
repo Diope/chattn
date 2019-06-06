@@ -154,7 +154,8 @@ export default {
                     website: null,
                     birth: null,
                     bio: null,
-                    profilePic: null
+                    profilePic: null,
+                    profileBanner: null
                 }).then(() => {
                     this.$store.dispatch('fetchUserProfile')
                     this.performingRequest = false;
