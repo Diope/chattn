@@ -80,7 +80,6 @@ export const store = new Vuex.Store({
     posts: [],
     comments: [],
     hiddenPosts: [],
-    requestedSinglePost: {},
     requestedUser: {},
     userPosts: [],
     singlePostComments: {}
@@ -116,7 +115,7 @@ export const store = new Vuex.Store({
             .then(docs => {
               docs.forEach(doc => {
                 fb.postCollection.doc(doc.id).update({
-                  profilePic: profilePic
+                  "user.profilePic": profilePic
                 });
               });
             });
@@ -148,9 +147,9 @@ export const store = new Vuex.Store({
             .then(docs => {
               docs.forEach(doc => {
                 fb.postCollection.doc(doc.id).update({
-                  displayName: displayName,
-                  handle: handle,
-                  location: location
+                  "user.displayName": displayName,
+                  "user.handle": handle,
+                  "user.location": location
                 });
               });
             });
@@ -161,9 +160,9 @@ export const store = new Vuex.Store({
               docs.forEach(doc => {
                 fb.commentsCollection.doc(doc.id).update({
                   user: {
-                    displayName: displayName,
-                    handle: handle,
-                    location: location
+                    "user.displayName": displayName,
+                    "user.handle": handle,
+                    "user.location": location
                   }
                 });
               });
@@ -239,10 +238,7 @@ export const store = new Vuex.Store({
         .catch(err => {
           console.log(err);
         });
-    },
-    // REQUEST_SINGLE_POST: async({commit, state}, data) => {
-    //   const {} = data;
-    // } 
+    }
   },
   mutations: {
     setCurrentUser(state, value) {
@@ -262,9 +258,6 @@ export const store = new Vuex.Store({
     },
     setUserPosts(state, value) {
       state.userPosts = value;
-    },
-    setRequestedSinglePost(state, value) {
-      state.requestedSinglePost = value;
     },
     setHiddenPosts(state, value) {
       if (value) {

@@ -2,7 +2,7 @@
     <div class="flexWrap">
           <div class="profilePicWrapper">
             <router-link :to="`/${userHandle}`">
-              <div v-if="userProfilePic !== null || userProfilePic !== ''" class="profilePhotoContainer">
+              <div v-if="userProfilePic" class="profilePhotoContainer">
                 <img :src="userProfilePic" style="height: 100%; width: 100%; object-fit: cover">
               </div>
               <div v-else class="profilePhotoContainer">

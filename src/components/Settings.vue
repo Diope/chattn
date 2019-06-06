@@ -25,28 +25,86 @@
                     </transition>
                 </div>
 
+                <template v-if="$v.displayName.$error">
+                    <span v-if="!$v.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
+                    <span v-if="!$v.displayName.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                </template>
                 <label for="displayName">Display Name</label>
-                <input type="text" v-model.trim="displayName" :placeholder="userProfile.displayName" id="displayName">
+                <input 
+                    type="text" v-model.trim="displayName" 
+                    :placeholder="userProfile.displayName" id="displayName" 
+                    @blur="$v.displayName.$touch()" 
+                    :style="!$v.displayName.minLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0' && !$v.displayName.maxLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
+                >
 
+                <template v-if="$v.handle.$error">
+                    <span v-if="!$v.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
+                    <span v-if="!$v.handle.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                </template>
                 <label for="handle">Chattn Handle</label>
-                <input type="text" v-model.trim="handle" :placeholder="'@' + userProfile.handle" id="handle">
+                <input 
+                    type="text" 
+                    v-model.trim="handle" 
+                    :placeholder="'@' + userProfile.handle" 
+                    id="handle" 
+                    @blur="$v.handle.$touch()"  
+                    :style="!$v.handle.minLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0' &&!$v.handle.maxLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
+                >
 
+                <template v-if="$v.location.$error">
+                    <span v-if="!$v.location.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 30 characters</span>
+                </template>
                 <label for="location">Location</label>
-                <input type="text" v-model.trim="location" :placeholder="userProfile.location" id="location">
+                <input 
+                    type="text" 
+                    v-model.trim="location" 
+                    :placeholder="userProfile.location" 
+                    id="location" 
+                    @blur="$v.location.$touch()" 
+                    :style="!$v.location.maxLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
+                >
 
+                <template v-if="$v.website.$error">
+                    <span v-if="!$v.website.url" style="font-size: 12px; color: #FDB6C1;">Must be a valid URL</span>
+                </template>
                 <label for="website">Website</label>
-                <input type="url" v-model.trim="website" :placeholder="userProfile.website" id="website" >
+                <input 
+                    type="url" 
+                    v-model.trim="website" 
+                    :placeholder="userProfile.website" 
+                    id="website" 
+                    @blur="$v.website.$touch()" 
+                    :style="!$v.website.url ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
+                >
 
                 <label for="birth">Birth Date</label>
                 <input type="date" v-model.number="birth" :placeholder="userProfile.birth" id="birth" >
 
+                <template v-if="$v.bio.$error">
+                    <span v-if="!$v.bio.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 200 characters</span>
+                </template>
                 <label for="bio">About Me</label>
-                <textarea v-model.trim="bio" :placeholder="userProfile.bio" id="bio" />
+                <textarea 
+                    v-model.trim="bio" 
+                    :placeholder="userProfile.bio" 
+                    id="bio" @blur="$v.bio.$touch()" 
+                    :style="!$v.bio.maxLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
+                />
 
                 <button 
                     @click="updateProfile" 
                     class="button"
-                    :disabled="displayName === '' && handle === '' && location === '' && website === '' && birth === '' && bio === ''"
+                    :disabled="
+                        displayName === '' 
+                        && handle === ''  
+                        && location === '' 
+                        && website === '' 
+                        && birth === '' 
+                        && bio === '' 
+                        || displayName.length > 20 
+                        || handle.length > 20
+                        || bio.length > 200
+                    "
                 >Update Profile</button>
             </form>
         </div>
@@ -55,7 +113,7 @@
 
 <script>
 import {mapState} from 'vuex'
-import {url, maxLength, minLength} from 'vuelidate/lib/validators'
+import {url, maxLength, minLength, required} from 'vuelidate/lib/validators'
 import { setTimeout } from 'timers';
 const fb = require('../FirebaseConfig');
 
@@ -76,8 +134,10 @@ export default {
         }
     },
     validations: {
-        displayName: {minLength: minLength(3), maxLength: maxLength(20)},
-        handle: {minLength: minLength(3), maxLength: maxLength(20)},
+        displayName: { minLength: minLength(1), maxLength: maxLength(20)},
+        handle: { minLength: minLength(1), maxLength: maxLength(20)},
+        bio: {maxLength: maxLength(200)},
+        location: {maxLength: maxLength(30)},
         website: {url}
     },
     computed: {
@@ -85,7 +145,7 @@ export default {
     },
     methods: {
         updateProfile() {
-            const formattedHandle = this.signupForm.handle.replace(/ /g,"_")
+            const formattedHandle = this.handle.replace(/ /g,"_")
             this.$store.dispatch('updateProfile', { // data that is received in the action on store ({context, state}, data)
                 displayName: this.displayName !== '' ? this.displayName : this.userProfile.displayName,
                 handle: this.handle !== '' ? formattedHandle : this.userProfile.handle,
@@ -149,8 +209,24 @@ export default {
 
 <style lang="scss">
     
-    .progress-bar {
-        margin: 10px 0;
+    #settings {
+        textarea {
+            border: 1px solid #e6ecf0;
+            outline: 0;
+            height: 100px;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .profilePicWrapper {
+            margin: 0 0px 35px 0 !important;
+        }
+
+        .SettingInput.has-status-error {
+            border-color: #FDB6C1
+        }
     }
+
 </style>
 

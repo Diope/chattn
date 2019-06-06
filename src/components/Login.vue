@@ -36,15 +36,15 @@
 
                 <template v-if="$v.signupForm.handle.$error">
                     <span v-if="!$v.signupForm.handle.required" style="font-size: 12px; color: #FDB6C1;">Chattn handle is required</span>
-                    <span v-if="!$v.signupForm.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
-                    <span v-if="!$v.signupForm.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                    <span v-if="!$v.signupForm.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 1 character</span>
+                    <span v-if="!$v.signupForm.handle.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
                 </template>
                 <input v-model.trim="signupForm.handle" type="text" placeholder="Your Chattn handle" id="handle" @blur="$v.signupForm.handle.$touch()"/>
 
                 <template v-if="$v.signupForm.displayName.$error">
                     <span v-if="!$v.signupForm.displayName.required" style="font-size: 12px; color: #FDB6C1;">Chattn Display Name is required</span>
-                    <span v-if="!$v.signupForm.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
-                    <span v-if="!$v.signupForm.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                    <span v-if="!$v.signupForm.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 1 character</span>
+                    <span v-if="!$v.signupForm.displayName.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
                 </template>
                 <input v-model.trim="signupForm.displayName" type="text" placeholder="Your display Name" id="displayName" @blur="$v.signupForm.displayName.$touch()"/>
                 
@@ -116,7 +116,7 @@ export default {
     },
     validations: {
         signupForm: {
-            handle: { required, minLength: minLength(3), maxLength: maxLength(16)},
+            handle: { required, minLength: minLength(1), maxLength: maxLength(16)},
             displayName: {required, minLength: minLength(1), maxLength: maxLength(16)},
             email: {required, email},
             password: {required, minLength: minLength(6)}

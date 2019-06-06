@@ -20,7 +20,7 @@
           <div class="create-post">
             
             <form @submit.prevent>
-                <chattbox v-model="post.content" @blur="$v.post.content.$touch()"></chattbox>
+                <chattbox v-model="post.content"></chattbox>
               <input
                 type="file"
                 accept="image/*"
@@ -227,13 +227,7 @@ export default {
     
   },
   methods: {
-    
-  
     createPost() {
-      this.$v.$touch()
-      if (this.$v.$invalid) {
-        this.err_message = 'ERROR'
-      } else {
         const {handle, displayName, profilePic, location} = this.userProfile
         const {tweetPic, content} = this.post
         this.$store.dispatch('ADD_POST', {
@@ -247,7 +241,6 @@ export default {
         })
         this.post.content = "";
         this.post.tweetPic = "";
-      }
     },
     showNewPosts() {
       const updatedPosts = this.hiddenPosts.concat(this.posts);

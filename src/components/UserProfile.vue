@@ -35,7 +35,18 @@
                 <div v-show="userPosts.length" class="profile__posts-pane">
                     <div :key="post.id" v-for="post in userPosts" class="profile__userPosts">
                         <div class="userDisplay">
-                            <span class="displayName">{{post.user.displayName}}</span><p>{{'@' + post.user.handle}} ・ {{post.createdOn | formatDate}}</p>
+                            <div class="postPhotoContainer">
+                                <div v-if="post.user.profilePic">
+                                    <img :src="post.user.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover" >
+                                </div>
+                                <div v-else>
+                                    <img src="../assets/images/default.png" alt="" style="height: 100%; width: 100%; object-fit: cover">
+                                </div>
+                            </div>
+                            <div style="margin-left: 8px;">
+                                <span class="displayName">{{post.user.displayName}}</span>
+                                <p>{{'@' + post.user.handle}}</p>
+                            </div>
                         </div>
                         <div>
                             {{post.content}}
