@@ -1,9 +1,12 @@
 <template>
-            <div id="userProfile">
-                
-                <div class="profile__info-pane">
+    <div :class="`${$options.name}`">
+        <div class="col1">
+                <div :class="`${$options.name}__banner`">
+                    <img :src="requestedUser.profileBanner" alt="" v-if="requestedUser.profileBanner" style="height: 100%; width: 100%; object-fit: cover">
+                </div>
+                <div :class="`${$options.name}__info-pane`">
 
-                    <div class="profile_spaceBetween">
+                    <div :class="`${$options.name}__spaceBetween`">
                         <div v-if="requestedUser.profilePic !== null" class="profile__info-pane-profilePic">
                             <img :src="requestedUser.profilePic" style="height: 100%; width: 100%; object-fit: cover">
                         </div>
@@ -12,7 +15,7 @@
                         </div>
                         
                         <div v-if="currentUser.uid === requestedUser.userId">
-                           <router-link to="/settings"><button class="button">Edit profile</button></router-link>
+                            <router-link to="/settings"><button class="button">Edit profile</button></router-link>
                         </div>
                     </div>
 
@@ -21,10 +24,18 @@
                         <span v-else>{{'@' + requestedUser.handle}}</span>
                         <div class="userBio">{{requestedUser.bio}}</div>
                         <div class="userMeta">
-                            <p class="metaItem"><i v-if="requestedUser.location !== null" class="fas fa-map-marker-alt"></i> {{requestedUser.location}}</p>
-                            <p class="metaItem"><i class="fas fa-link" v-if="requestedUser.website !== null"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a></p>
-                            <p class="metaItem"><i class="fas fa-birthday-cake" v-if="requestedUser.birth !== null"></i> {{requestedUser.birth | birthDate}}</p>
-                            <p class="metaItem"><i class="fas fa-calendar-alt" v-if="requestedUser.createdOn !== null"></i> {{requestedUser.createdOn | joinDate}}</p>
+                            <p class="metaItem" v-if="requestedUser.location !== null">
+                                <i class="fas fa-map-marker-alt"></i> {{requestedUser.location}}
+                            </p>
+                            <p class="metaItem" v-if="requestedUser.website !== null">
+                                <i class="fas fa-link"></i> <a :href="`${requestedUser.website}`"> {{requestedUser.website}}</a>
+                            </p>
+                            <p class="metaItem" v-if="requestedUser.birth !== null">
+                                <i class="fas fa-birthday-cake"></i> {{requestedUser.birth | birthDate}}
+                            </p>
+                            <p class="metaItem" v-if="requestedUser.createdOn !== null">
+                                <i class="fas fa-calendar-alt"></i> {{requestedUser.createdOn | joinDate}}
+                            </p>
                         </div>
                         <div style="text-align: center;" v-if="requestedUser.handle === null">
                             <h2>This account doesn’t exist</h2>
@@ -54,6 +65,7 @@
                     </div>
                 </div>
         </div>
+    </div>
 
 </template>
 
@@ -127,24 +139,36 @@ export default {
 
 <style lang="scss">
     @import '../assets/scss/global';
-    #userProfile {
-        width: 50%;
-        margin: 5vh auto 0;
-        background: white;
+    
+    .UserProfile {
 
-        .profile__info-pane {
-            padding: 2rem;
+        .col1 {
+            max-width: 700px;
+            margin: 5vh auto 0;
+            background: #fff;
+            padding: 0;
+        }
+
+        &__banner{
+            height: 250px;
+            background-color: $primary;
+        }
+
+        &__spaceBetween {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+        &__info-pane {
+            margin: 0 2rem 1rem;
             border-bottom: 1px solid $light;
     
             h3 {
                 margin-bottom: 0;
             }
 
-            .profile_spaceBetween {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+            
 
             .profile__info-pane-profilePic {
                 height: 150px;
@@ -152,11 +176,12 @@ export default {
                 border: 1px solid black;
                 border-radius: 50%;
                 overflow: hidden;
-                margin-bottom: 0.8rem;
+                margin: -6rem 0 0.5rem;
             }
 
             .userBio {
                 padding: 0.8rem 0;
+                color: black;
             }
 
             .userMeta {
@@ -168,7 +193,7 @@ export default {
                 .metaItem {
                     margin: 0 auto 0 0;
                     font-size: 0.9rem;
-                    color: lighten($dark, 17%);
+                    color: rgb(101, 119, 134);
                 }
     
             }

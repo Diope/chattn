@@ -64,7 +64,7 @@ export default {
             const randomHex = Math.random()
                 .toString(17)
                 .slice(2, 14);
-      
+                
             const preFix = Math.random()
                 .toString(18)
                 .slice(2,5)

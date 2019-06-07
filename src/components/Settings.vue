@@ -3,9 +3,7 @@
         <div class="col1">
             <ProfileBanner></ProfileBanner>
 
-            <transition name="fade">
-                <p v-if="showSuccess" class="success">Your profile has been updated</p>
-            </transition>
+            
             <div class="profileHeader">
 
             </div>
@@ -32,6 +30,9 @@
                         </div>
                     <transition name="fade">
                         <div v-if="uploadEnd" class="success"><p>Profile Picture has been uploaded</p></div>
+                    </transition>
+                    <transition name="fade">
+                        <p v-if="showSuccess" class="success">Your profile has been updated</p>
                     </transition>
                 </div>
 
@@ -95,11 +96,12 @@
                 </template>
                 <label for="bio">About Me</label>
                 <textarea 
-                    v-model.trim="bio" 
+                    v-model="bio" 
                     :placeholder="userProfile.bio" 
                     id="bio" @blur="$v.bio.$touch()" 
                     :style="!$v.bio.maxLength ? 'border-color: #FDB6C1' : 'border-color: #e6ecf0'"
                 />
+                <div class="bio_count" style="font-size: 12px;">{{this.bio.length}}/200</div>
 
                 <button 
                     @click="updateProfile" 
@@ -289,6 +291,9 @@ export default {
             margin-top: 2rem;
         }
 
+        .success {
+            color: $success;
+        }
     }
 
 </style>
