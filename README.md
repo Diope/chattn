@@ -1,8 +1,28 @@
-# chattn
+# Chattn
 
-I've been messing with Vue on the side for fun, this is just a small CRUD project with Firebase backend to get better acquainted with Vue and Vuex.
+A small Twitter-esque app, nothing new or novel ideas wise but not every app has to be.
 
-It's a small Twitter clone, using Firebase as the backend (I created another Twitter clone with React/Redux but built my own backend and...I need to start using Firebase more often lmao)
+Technologies:
+* Vue
+* Vuex
+* Firestore / Google Storage
+* Jest
+
+Features added so far:
+* User auth flow
+* Create new posts with option to attach an image
+* Modal to see full image
+* Update account in settings
+* Upload both profile photo and profile banner, changes are propagated through all posts and comments
+* Comments
+* Likes
+* User Profile page (displays: handle, display name, profile pic, birthday, location, list of all posts made by a particular user)
+
+TODO:
+* Followers/Following
+* Delete a post
+* Make an account private
+
 
 ## Post project notes:
 

@@ -74,7 +74,7 @@ export default {
             this.uploading = true;
             this.uploadTask = fb.storage
                 .child(
-                    `${this.userProfile.userId}` +"/profile_picture/profile_banner/" + `${preFix}${randomHex}`
+                    `${this.userProfile.userId}` + "/profile_picture/profile_banner/" + `${preFix}${randomHex}` + file.name
                 ).put(file);
         },
         removeBanner () {
