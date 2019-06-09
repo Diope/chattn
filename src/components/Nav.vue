@@ -66,8 +66,6 @@
 <script>
 const fb = require('../FirebaseConfig.js')
 import { mapState } from "vuex";
-
-import DropDownPane from './DropDownPane'
 import ImagePanePopup from './ImagePanePopup'
 export default {
     name: `Nav`,
@@ -78,7 +76,6 @@ export default {
         }
     },
     components: {
-        DropDownPane,
         ImagePanePopup
     },
     computed: {
