@@ -1,8 +1,10 @@
 // navigation
 header {
-    position: relative;
+    position: fixed;
     background: $white;
     z-index: 10;
+    top: 0;
+    width: 100%;
 
     .title {
         display: inline-block;
@@ -124,6 +126,16 @@ header {
         padding: 2rem;
         flex-wrap: wrap;
         position: fixed;
+
+        .userDisplay {
+            @media screen and (max-width: 1000px) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 1000px) {
+            position: relative;
+        }
         h4 {
             display: inline-flex;
             padding-right: 6px;
