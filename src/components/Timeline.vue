@@ -1,5 +1,5 @@
 <template>
-  <div id="timeline">
+  <div :id="`${$options.name}`">
     <section>
       <div class="col1">
         <div class="profile">
@@ -64,18 +64,9 @@
             <div class="flexWrap">
               <div class="profilePicWrapper">
                 <router-link :to="{name: 'UserProfile', params: {handle: post.user.handle}}">
-                  
-                  <div v-if="post.user.profilePic !== null" class="profilePhotoContainer">
-                    <img
-                      :src="post.user.profilePic"
-                      style="height: 100%; width: 100%; object-fit: cover"
-                    >
-                  </div>
-                  <div v-else class="profilePhotoContainer">
-                    <img
-                      src="../assets/images/default.png"
-                      style="height: 100%; width: 100%; object-fit: cover"
-                    >
+
+                  <div class="profilePhotoContainer">
+                    <img :src="post.user.profilePic ? post.user.profilePic : require('../assets/images/default.png')" style="height: 100%; width: 100%; object-fit: cover">
                   </div>
                 </router-link>
               </div>
@@ -91,6 +82,11 @@
                           <p class="timeAgo">{{post.createdOn | formatDate }}</p>
                         </span>
                       </router-link>
+                      <div class="deletePost" v-if="currentUser.uid === post.userId">
+                        <a @click="deletePost(post)">
+                          <i class="fas fa-times-circle"></i>
+                        </a>
+                      </div>
                     </div>
                     <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}" style="">
                         <div class="postText">{{post.content}}</div>
@@ -287,6 +283,9 @@ export default {
       this.$store.dispatch('ADD_LIKE', {
         docId, postId, likes
       })
+    },
+    deletePost(post) {
+      this.$store.dispatch('DELETE_POST', post.id)
     },
     detectFiles(e) {
       let fileList = e.target.files || e.dataTransfer.files;

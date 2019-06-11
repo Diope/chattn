@@ -247,6 +247,47 @@ export const store = new Vuex.Store({
         .catch(err => {
           console.log(err);
         });
+    },
+    DELETE_POST: async ({ commit, state }, data) => {
+      console.log(data);
+
+      fb.postCollection
+        .doc(data)
+        .delete()
+        .then(() => {
+          fb.commentsCollection
+            .where("postId", "==", data)
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                doc.ref
+                  .delete()
+                  .then(() => {
+                    console.log("Document successfully deleted!");
+                  })
+                  .catch(error => {
+                    console.error("Error removing document: ", error);
+                  });
+              });
+            });
+        })
+        .then(() => {
+          fb.likesCollection
+            .where("postId", "==", data)
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                doc.ref
+                  .delete()
+                  .then(() => {
+                    console.log("Deleted");
+                  })
+                  .catch(err => {
+                    console.error("Error", err);
+                  });
+              });
+            });
+        });
     }
   },
   mutations: {

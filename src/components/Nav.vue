@@ -107,6 +107,11 @@ export default {
 
 <style lang="scss">
     @import '../assets/scss/global';
+
+header {
+    border-bottom: 1px solid #e6ecf0;
+}
+
 .Nav {
 
     ul {
