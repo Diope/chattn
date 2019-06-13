@@ -1,6 +1,5 @@
 <template>
-  <div id="timeline">
-    <section>
+  <section id="timeline">
       <div class="col1">
         <div class="profile">
           <div class="userDisplay">
@@ -21,6 +20,10 @@
             
             <form @submit.prevent>
                 <chattbox v-model="post.content"></chattbox>
+                <br>
+                <div v-if="post.tweetPic" style="max-width:260px; max-height: 160px; overflow: hidden;">
+                  <img :src="post.tweetPic" alt="image to upload" style="height: auto; width: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #657787;">
+                </div>
               <input
                 type="file"
                 accept="image/*"
@@ -98,7 +101,7 @@
                   </div>
 
                     
-                  <div v-if="post.tweetPic !== null" class="postImage">
+                  <div v-if="post.tweetPic" class="postImage">
                     <a @click="openImagePanePopup(post)">
                       <img :src="post.tweetPic" alt>
                     </a>
@@ -179,8 +182,7 @@
 
       <!-- end of -->
       </div>   
-    </section>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -206,7 +208,8 @@ export default {
     return {
       post: {
         content: "",
-        tweetPic: null
+        tweetPic: null,
+        image: null
       },
       comment: {
         postCommentCount: 0,
@@ -229,18 +232,19 @@ export default {
   methods: {
     createPost() {
         const {handle, displayName, profilePic, location} = this.userProfile
-        const {tweetPic, content} = this.post
+        const {tweetPic, content, image} = this.post
         this.$store.dispatch('ADD_POST', {
           userId: this.currentUser.uid,
           content,
-          tweetPic,
+          image,
           likes: 0,
           comments: 0,
           createdOn: new Date(),
           user: {handle, displayName, profilePic, location}
         })
         this.post.content = "";
-        this.post.tweetPic = "";
+        this.post.tweetPic = null;
+        this.post.image = null
     },
     showNewPosts() {
       const updatedPosts = this.hiddenPosts.concat(this.posts);
@@ -290,30 +294,42 @@ export default {
     },
     detectFiles(e) {
       let fileList = e.target.files || e.dataTransfer.files;
-      Array.from(Array(fileList.length).keys()).map(x => {
-        this.upload(fileList[x]);
-      });
+      let fileName = fileList[0].name;
+      if (fileName.lastIndexOf('.') <= 0) {
+        this.err_message = "File type is not valid"
+      }
+
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.post.tweetPic = fileReader.result;
+      })
+      fileReader.readAsDataURL(fileList[0])
+      this.post.image = fileList[0]
+
+      // Array.from(Array(fileList.length).keys()).map(x => {
+      //   this.upload(fileList[x]);
+      // });
     },
-    upload(file) {
-      const randomHex = Math.random()
-        .toString(17)
-        .slice(2, 14);
+    // upload(file) {
+    //   const randomHex = Math.random()
+    //     .toString(17)
+    //     .slice(2, 14);
       
-      const preFix = Math.random()
-        .toString(18)
-        .slice(2,5)
+    //   const preFix = Math.random()
+    //     .toString(18)
+    //     .slice(2,5)
 
-      const timeStamp = moment(new Date()).format('YYYY')
+    //   const timeStamp = moment(new Date()).format('YYYY')
 
-      this.uploading = true;
-      this.uploadTask = fb.storage
-        .child(
-          `${this.currentUser.uid}` +
-            "/tweet_images/" + `${timeStamp}` + "/" +
-            `${preFix}${randomHex}`
-        )
-        .put(file);
-    }
+    //   this.uploading = true;
+    //   this.uploadTask = fb.storage
+    //     .child(
+    //       `${this.currentUser.uid}` +
+    //         "/tweet_images/" + `${timeStamp}` + "/" +
+    //         `${preFix}${randomHex}`
+    //     )
+    //     .put(file);
+    // }
   },
   watch: {
     uploadTask: function() {

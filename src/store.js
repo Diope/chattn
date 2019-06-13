@@ -3,6 +3,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import router from "./router";
+import firebase from "firebase";
 
 const fb = require("./FirebaseConfig");
 
@@ -204,24 +205,54 @@ export const store = new Vuex.Store({
         });
     },
     ADD_POST: async ({ commit }, data) => {
-      const {
-        userId,
-        content,
-        tweetPic,
-        likes,
-        comments,
-        createdOn,
-        user
-      } = data;
-      fb.postCollection.add({
-        userId,
-        likes,
-        content,
-        comments,
-        tweetPic,
-        user,
-        createdOn
-      });
+      const { userId, content, likes, comments, createdOn, user } = data;
+      let tweetPic;
+      let key;
+      fb.postCollection
+        .add({
+          userId,
+          likes,
+          content,
+          comments,
+          user,
+          createdOn
+        })
+        .then(ref => {
+          if (data.image === null) {
+            return;
+          }
+          key = ref.id;
+          const filename = data.image.name;
+          const ext = filename.slice(filename.lastIndexOf("."));
+          const randomHex = Math.random()
+            .toString(17)
+            .slice(2, 14);
+      
+          const preFix = Math.random()
+            .toString(18)
+            .slice(2,5)
+
+          return firebase
+            .storage()
+            .ref(
+              userId +
+                "/tweet_images/" +
+                key +
+                "/" +
+                preFix +
+                randomHex +
+                ext
+            )
+            .put(data.image);
+        })
+        .then(fileData => {
+          if (fileData === undefined) {
+            return;
+          }
+          fileData.ref.getDownloadURL().then(url => {
+            fb.postCollection.doc(key).update({ tweetPic: url });
+          })
+        });
     },
     ADD_LIKE: async ({ commit, state }, data) => {
       const { docId, postId, likes } = data;

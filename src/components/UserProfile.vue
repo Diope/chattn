@@ -1,5 +1,5 @@
 <template>
-    <div :class="`${$options.name}`">
+    <section :class="`${$options.name}`">
         <div class="col1">
                 <div :class="`${$options.name}__banner`">
                     <img :src="requestedUser.profileBanner" alt="" v-if="requestedUser.profileBanner" style="height: 100%; width: 100%; object-fit: cover">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
         </div>
-    </div>
+    </section>
 
 </template>
 
@@ -141,6 +141,7 @@ export default {
     @import '../assets/scss/global';
     
     .UserProfile {
+            padding-top: 72px;
 
         .col1 {
             max-width: 700px;

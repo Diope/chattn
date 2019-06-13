@@ -111,10 +111,8 @@ header {
 
 // dashboard
 #timeline {
-    section {
-        padding: 2rem 0;
-    }
-
+    padding-top: 72px;
+    
     .col1 {
         flex: 0 0 30%;
         @media screen and (max-width: 1000px) {

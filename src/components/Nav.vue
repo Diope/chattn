@@ -31,7 +31,7 @@
 
                                 <div :class="`${$options.name}__dropDownUserProfile`">
                                     <div :class="`${$options.name}__dropDownUserProfile-avatar`">
-                                        <img :src="userProfile.profilePic" :alt="`${userProfile.handle}'s Avatar'`" style="height: 100%; width: 100%; object-fit: cover;">
+                                        <img :src="userProfile.profilePic ? userProfile.profilePic : require('../assets/images/default.png')" :alt="`${userProfile.handle}'s Avatar'`" style="height: 100%; width: 100%; object-fit: cover;">
                                     </div>
                                     <h4 style="margin-top: 5px; margin-bottom: 0; font-size: 16px;">{{userProfile.displayName}}</h4>
                                     <p style="font-size: 14px;">@{{userProfile.handle}}</p>

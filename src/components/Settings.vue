@@ -226,7 +226,7 @@ export default {
     @import '../assets/scss/global';
     
     .Settings {
-        padding: 2rem 0;
+        padding-top: 72px;
 
         &__addIcon {
             max-width: 100%;

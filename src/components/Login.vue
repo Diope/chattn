@@ -141,30 +141,43 @@ export default {
         signup() {
             this.performingRequest = true
             const formattedHandle = this.signupForm.handle.replace(/ /g,"_")
-            fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(user => {
-                this.$store.commit('setCurrentUser', user.user)
 
-                fb.userCollection.doc(user.user.uid).set({
-                    handle: formattedHandle,
-                    displayName: this.signupForm.displayName,
-                    email: this.signupForm.email,
-                    userId: user.user.uid,
-                    createdOn: new Date(),
-                    location: null,
-                    website: null,
-                    birth: null,
-                    bio: null,
-                    profilePic: null,
-                    profileBanner: null
-                }).then(() => {
-                    this.$store.dispatch('fetchUserProfile')
-                    this.performingRequest = false;
-                    this.$router.push('/timeline')
-                }).catch(err => console.log(err))
-            }).catch(err => {
-                this.performingRequest = false;
-                this.err_message = err.message
-            })
+            fb.userCollection.where('handle', '==', this.signupForm.handle).get()
+                .then(doc => {
+                    if (!doc.empty) {
+                        throw Error(`The handle ${this.signupForm.handle} is already in use`)
+                    } else {
+                        fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(data => {
+                            this.$store.commit('setCurrentUser', data.user)
+
+                            fb.userCollection.doc(data.user.uid).set({
+                                handle: formattedHandle,
+                                displayName: this.signupForm.displayName,
+                                email: this.signupForm.email,
+                                userId: data.user.uid,
+                                createdOn: new Date().toISOString(),
+                                location: null,
+                                website: null,
+                                birth: null,
+                                bio: null,
+                                profilePic: null,
+                                profileBanner: null
+                            }).then(() => {
+                                this.$store.dispatch('fetchUserProfile')
+                                this.performingRequest = false;
+                                this.$router.push('/timeline')
+                            }).catch(err => console.log(err))
+                        }).catch(err => {
+                            this.performingRequest = false;
+                            this.err_message = err.message
+                        })
+                    }
+                }).catch(err => {
+                    this.performingRequest = false
+                    this.err_message = err.message
+                })
+
+            
         },
         resetPass() {
             this.performingRequest = true
