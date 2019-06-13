@@ -219,15 +219,13 @@ export default {
       },
       showCommentPopup: false,
       showImagePanePopup: false,
-      uploadTask: "",
-      uploadEnd: false,
       progressUpload: 0,
       postPopup: {},
       err_message: ""
     };
   },
   computed: {
-    
+    ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts"])
   },
   methods: {
     createPost() {
@@ -280,7 +278,7 @@ export default {
         postId: postId,
         postComment: postCommentCount,
         content: content,
-        createdOn: new Date(),
+        createdOn: new Date().toISOString(),
         user: {handle, displayName, profilePic}
       }).then(() => {
           this.closePostCommentPopup();
@@ -355,9 +353,6 @@ export default {
         }
       );
     }
-  },
-  computed: {
-    ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts"])
   },
   filters: {
     formatDate(val) {
