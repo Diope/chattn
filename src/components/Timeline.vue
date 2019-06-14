@@ -94,6 +94,11 @@
                           <p class="timeAgo">{{post.createdOn | formatDate }}</p>
                         </span>
                       </router-link>
+                      <div class="deletePost" v-if="currentUser.uid === post.userId">
+                        <a @click="deletePost(post)">
+                          <i class="fas fa-times-circle"></i>
+                        </a>
+                      </div>
                     </div>
                     <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}" style="">
                         <div class="postText">{{post.content}}</div>
@@ -289,6 +294,9 @@ export default {
       this.$store.dispatch('ADD_LIKE', {
         docId, postId, likes
       })
+    },
+    deletePost(post) {
+      this.$store.dispatch('DELETE_POST', post.id)
     },
     detectFiles(e) {
       let fileList = e.target.files || e.dataTransfer.files;
