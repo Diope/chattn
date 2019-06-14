@@ -38,7 +38,7 @@
 
                 <template v-if="$v.displayName.$error">
                     <span v-if="!$v.displayName.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
-                    <span v-if="!$v.displayName.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                    <span v-if="!$v.displayName.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 30 character</span>
                 </template>
                 <label for="displayName">Display Name</label>
                 <input 
@@ -50,12 +50,12 @@
 
                 <template v-if="$v.handle.$error">
                     <span v-if="!$v.handle.minLength" style="font-size: 12px; color: #FDB6C1;">The minimum length is 3 character</span>
-                    <span v-if="!$v.handle.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 14 character</span>
+                    <span v-if="!$v.handle.maxLength" style="font-size: 12px; color: #FDB6C1;">The maximum length is 30 character</span>
                 </template>
                 <label for="handle">Chattn Handle</label>
                 <input 
                     type="text" 
-                    v-model.trim="handle" 
+                    v-model="handle" 
                     :placeholder="'@' + userProfile.handle" 
                     id="handle" 
                     @blur="$v.handle.$touch()"  
@@ -113,8 +113,8 @@
                         && website === '' 
                         && birth === '' 
                         && bio === '' 
-                        || displayName.length > 20 
-                        || handle.length > 20
+                        || displayName.length > 30 
+                        || handle.length > 30
                         || bio.length > 200
                     "
                 >Update Profile</button>
@@ -151,8 +151,8 @@ export default {
         }
     },
     validations: {
-        displayName: { minLength: minLength(1), maxLength: maxLength(20)},
-        handle: { minLength: minLength(1), maxLength: maxLength(20)},
+        displayName: { minLength: minLength(1), maxLength: maxLength(30)},
+        handle: { minLength: minLength(1), maxLength: maxLength(30)},
         bio: {maxLength: maxLength(200)},
         location: {maxLength: maxLength(30)},
         website: {url}
@@ -163,7 +163,7 @@ export default {
     methods: {
         updateProfile() {
             const formattedHandle = this.handle.replace(/ /g,"_")
-            this.$store.dispatch('updateProfile', { // data that is received in the action on store ({context, state}, data)
+            this.$store.dispatch('updateProfile', { 
                 displayName: this.displayName !== '' ? this.displayName : this.userProfile.displayName,
                 handle: this.handle !== '' ? formattedHandle : this.userProfile.handle,
                 location: this.location !== '' ? this.location : this.userProfile.location,

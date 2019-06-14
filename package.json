@@ -1,5 +1,13 @@
 {
   "name": "chattn",
+  "author": "Dion Pettaway",
+  "homepage": "https://github.com/diope/chattn",
+  "description": "A small twitter-esque app. Created as a playground to learn Vue/Vuex",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diope/chattn.git"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {

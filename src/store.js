@@ -135,7 +135,7 @@ export const store = new Vuex.Store({
             .then(docs => {
               docs.forEach(doc => {
                 fb.commentsCollection.doc(doc.id).update({
-                  user: { profilePic: profilePic }
+                  "user.profilePic": profilePic
                 });
               });
             });
@@ -227,21 +227,15 @@ export const store = new Vuex.Store({
           const randomHex = Math.random()
             .toString(17)
             .slice(2, 14);
-      
+
           const preFix = Math.random()
             .toString(18)
-            .slice(2,5)
+            .slice(2, 5);
 
           return firebase
             .storage()
             .ref(
-              userId +
-                "/tweet_images/" +
-                key +
-                "/" +
-                preFix +
-                randomHex +
-                ext
+              userId + "/tweet_images/" + key + "/" + preFix + randomHex + ext
             )
             .put(data.image);
         })
@@ -251,7 +245,7 @@ export const store = new Vuex.Store({
           }
           fileData.ref.getDownloadURL().then(url => {
             fb.postCollection.doc(key).update({ tweetPic: url });
-          })
+          });
         });
     },
     ADD_LIKE: async ({ commit, state }, data) => {
