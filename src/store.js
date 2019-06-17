@@ -239,11 +239,7 @@ export const store = new Vuex.Store({
 
           const preFix = Math.random()
             .toString(18)
-<<<<<<< HEAD
-            .slice(2, 5);
-=======
             .slice(2, 4);
->>>>>>> deleting_a_post_maybe
 
           return firebase
             .storage()
