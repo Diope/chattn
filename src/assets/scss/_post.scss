@@ -42,16 +42,17 @@
 
         .postMain {
             margin: 0 5px 0 5px;
-            width: 80%;
+            width: 85%;
 
             .postContainer {
                 .postContent {
                     margin-bottom: 0.5rem;
                     .userDisplay {
                         margin-bottom: 5px;
-                        display: inline-block;
+                        display: flex;
                         align-content: center;
                         align-items: center;
+                        justify-content: space-between;
                 
                         span.displayName {
                             display: inline;

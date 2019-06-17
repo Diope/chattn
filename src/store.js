@@ -205,8 +205,16 @@ export const store = new Vuex.Store({
         });
     },
     ADD_POST: async ({ commit }, data) => {
-      const { userId, content, likes, comments, createdOn, user } = data;
-      let tweetPic;
+      const {
+        userId,
+        content,
+        likes,
+        comments,
+        createdOn,
+        user,
+        tweetPic
+      } = data;
+      // let tweetPic;
       let key;
       fb.postCollection
         .add({
@@ -215,7 +223,8 @@ export const store = new Vuex.Store({
           content,
           comments,
           user,
-          createdOn
+          createdOn,
+          tweetPic
         })
         .then(ref => {
           if (data.image === null) {
@@ -230,7 +239,11 @@ export const store = new Vuex.Store({
 
           const preFix = Math.random()
             .toString(18)
+<<<<<<< HEAD
             .slice(2, 5);
+=======
+            .slice(2, 4);
+>>>>>>> deleting_a_post_maybe
 
           return firebase
             .storage()
@@ -243,6 +256,7 @@ export const store = new Vuex.Store({
           if (fileData === undefined) {
             return;
           }
+
           fileData.ref.getDownloadURL().then(url => {
             fb.postCollection.doc(key).update({ tweetPic: url });
           });
@@ -271,6 +285,67 @@ export const store = new Vuex.Store({
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    DELETE_POST: async ({ commit, state }, data) => {
+      const { postId, userId, tweetPic } = data;
+
+      fb.postCollection
+        .doc(postId)
+        .delete()
+        .then(() => {
+          fb.commentsCollection
+            .where("postId", "==", postId)
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                doc.ref
+                  .delete()
+                  .then(() => {
+                    console.log("Document successfully deleted!");
+                  })
+                  .catch(error => {
+                    console.error("Error removing document: ", error);
+                  });
+              });
+            });
+        })
+        .then(() => {
+          fb.likesCollection
+            .where("postId", "==", postId)
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                doc.ref
+                  .delete()
+                  .then(() => {
+                    console.log("Deleted");
+                  })
+                  .catch(err => {
+                    console.error("Error", err);
+                  });
+              });
+            });
+        })
+        .then(() => {
+          if (tweetPic !== null) {
+            const fileName = tweetPic.split("%");
+            const final = fileName[3]
+              .split("?")[0]
+              .toString()
+              .slice(2);
+
+            return firebase
+              .storage()
+              .ref(userId + "/tweet_images/" + postId + "/" + final)
+              .delete()
+              .then(() => {
+                console.log("Object deleted");
+              })
+              .catch(err => {
+                console.log("Error", err.message);
+              });
+          }
         });
     }
   },
