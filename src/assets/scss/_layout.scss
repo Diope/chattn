@@ -119,44 +119,44 @@ header {
     		flex: 0 0 40%;
     	}
     }
-    .profile {
-        background: $white;
-        padding: 2rem;
-        flex-wrap: wrap;
-        position: fixed;
+    // .newPostContainer {
+    //     background: $white;
+    //     padding: 2rem;
+    //     flex-wrap: wrap;
+    //     position: fixed;
 
-        .userDisplay {
-            @media screen and (max-width: 1000px) {
-                display: none;
-            }
-        }
+    //     .userDisplay {
+    //         @media screen and (max-width: 1000px) {
+    //             display: none;
+    //         }
+    //     }
 
-        @media screen and (max-width: 1000px) {
-            position: relative;
-        }
-        h4 {
-            display: inline-flex;
-            padding-right: 6px;
-            color: $dark;
-        }
+    //     @media screen and (max-width: 1000px) {
+    //         position: relative;
+    //     }
+    //     h4 {
+    //         display: inline-flex;
+    //         padding-right: 6px;
+    //         color: $dark;
+    //     }
         
-        p {
-            display: inline-flex;
-        }
-    }
+    //     p {
+    //         display: inline-flex;
+    //     }
+    // }
 
-    .create-post {
-        p {
-            margin-bottom: 0.5rem;
-        }
+    // .create-post {
+    //     p {
+    //         margin-bottom: 0.5rem;
+    //     }
         
-        .button {
-            margin-top: 1rem;
-            min-width: 90px;
-            width: 10%;
-            z-index: 5;
-        }
-    }
+    //     .button {
+    //         margin-top: 1rem;
+    //         min-width: 90px;
+    //         width: 10%;
+    //         z-index: 5;
+    //     }
+    // }
     .hidden-posts {
         text-align: center;
         border: 1px solid #e6ecf0;

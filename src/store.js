@@ -205,8 +205,16 @@ export const store = new Vuex.Store({
         });
     },
     ADD_POST: async ({ commit }, data) => {
-      const { userId, content, likes, comments, createdOn, user } = data;
-      let tweetPic;
+      const {
+        userId,
+        content,
+        likes,
+        comments,
+        createdOn,
+        user,
+        tweetPic
+      } = data;
+      // let tweetPic;
       let key;
       fb.postCollection
         .add({
@@ -215,7 +223,8 @@ export const store = new Vuex.Store({
           content,
           comments,
           user,
-          createdOn
+          createdOn,
+          tweetPic
         })
         .then(ref => {
           if (data.image === null) {
@@ -227,21 +236,15 @@ export const store = new Vuex.Store({
           const randomHex = Math.random()
             .toString(17)
             .slice(2, 14);
-      
+
           const preFix = Math.random()
             .toString(18)
-            .slice(2,5)
+            .slice(2, 4);
 
           return firebase
             .storage()
             .ref(
-              userId +
-                "/tweet_images/" +
-                key +
-                "/" +
-                preFix +
-                randomHex +
-                ext
+              userId + "/tweet_images/" + key + "/" + preFix + randomHex + ext
             )
             .put(data.image);
         })
@@ -249,9 +252,10 @@ export const store = new Vuex.Store({
           if (fileData === undefined) {
             return;
           }
+
           fileData.ref.getDownloadURL().then(url => {
             fb.postCollection.doc(key).update({ tweetPic: url });
-          })
+          });
         });
     },
     ADD_LIKE: async ({ commit, state }, data) => {
@@ -280,14 +284,14 @@ export const store = new Vuex.Store({
         });
     },
     DELETE_POST: async ({ commit, state }, data) => {
-      console.log(data);
+      const { postId, userId, tweetPic } = data;
 
       fb.postCollection
-        .doc(data)
+        .doc(postId)
         .delete()
         .then(() => {
           fb.commentsCollection
-            .where("postId", "==", data)
+            .where("postId", "==", postId)
             .get()
             .then(querySnapshot => {
               querySnapshot.forEach(doc => {
@@ -304,7 +308,7 @@ export const store = new Vuex.Store({
         })
         .then(() => {
           fb.likesCollection
-            .where("postId", "==", data)
+            .where("postId", "==", postId)
             .get()
             .then(querySnapshot => {
               querySnapshot.forEach(doc => {
@@ -318,6 +322,26 @@ export const store = new Vuex.Store({
                   });
               });
             });
+        })
+        .then(() => {
+          if (tweetPic !== null) {
+            const fileName = tweetPic.split("%");
+            const final = fileName[3]
+              .split("?")[0]
+              .toString()
+              .slice(2);
+
+            return firebase
+              .storage()
+              .ref(userId + "/tweet_images/" + postId + "/" + final)
+              .delete()
+              .then(() => {
+                console.log("Object deleted");
+              })
+              .catch(err => {
+                console.log("Error", err.message);
+              });
+          }
         });
     }
   },

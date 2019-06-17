@@ -1,48 +1,7 @@
 <template>
   <section id="timeline">
       <div class="col1">
-        <div class="profile">
-          <div class="userDisplay">
-            <div class="postPhotoContainer">
-              <div v-if="userProfile.profilePic">
-                <img :src="userProfile.profilePic" alt="" style="height: 100%; width: 100%; object-fit: cover" >
-              </div>
-              <div v-else>
-                <img src="../assets/images/default.png" alt="" style="height: 100%; width: 100%; object-fit: cover">
-              </div>
-            </div>
-            <div style="margin-left: 8px;">
-              <span class="displayName">{{userProfile.displayName}}</span>
-              <p>{{'@' + userProfile.handle}}</p>
-            </div>
-          </div>
-          <div class="create-post">
-            
-            <form @submit.prevent>
-                <chattbox v-model="post.content"></chattbox>
-                <br>
-                <div v-if="post.tweetPic" style="max-width:260px; max-height: 160px; overflow: hidden;">
-                  <img :src="post.tweetPic" alt="image to upload" style="height: auto; width: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #657787;">
-                </div>
-              <input
-                type="file"
-                accept="image/*"
-                :multiple="false"
-                @change="detectFiles($event)"
-                ref="tweetImage"
-                style="display: none"
-              >
-        
-              <div class="postButtons">
-                <div class="photoButtonWrapper" @click="$refs.tweetImage.click()">
-                  <i class="fas fa-camera-retro"></i>
-                </div>
-                <button @click="createPost" :disabled="post.content == '' || post.content.length > 280" class="button">Chatt</button>
-              </div>
-            </form>
-          </div>
-        <div v-show="progressUpload" class="progressBar" :style="{ width: progressUpload + '%'}">{{ progressUpload }}</div>
-        </div>
+        <CreatePost/>
       </div>
 
       <!-- TimeLine -->
@@ -196,26 +155,19 @@ import moment from "moment";
 
 import AvatarDisplay from './AvatarDisplay'
 import ImagePanePopup from './ImagePanePopup'
-import Chattbox from './ChattBox';
+import CreatePost from './CreatePost';
 
-
-const fb = require("../FirebaseConfig.js");
 
 export default {
   name: `Timeline`, //OMG I just discovered $options.name for easier CSS naming
   components: {
     AvatarDisplay,
     ImagePanePopup,
-    Chattbox
+    CreatePost
   },
   
   data() {
     return {
-      post: {
-        content: "",
-        tweetPic: null,
-        image: null
-      },
       comment: {
         postCommentCount: 0,
         postId: "",
@@ -233,22 +185,7 @@ export default {
     ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts"])
   },
   methods: {
-    createPost() {
-        const {handle, displayName, profilePic, location} = this.userProfile
-        const {tweetPic, content, image} = this.post
-        this.$store.dispatch('ADD_POST', {
-          userId: this.currentUser.uid,
-          content,
-          image,
-          likes: 0,
-          comments: 0,
-          createdOn: new Date(),
-          user: {handle, displayName, profilePic, location}
-        })
-        this.post.content = "";
-        this.post.tweetPic = null;
-        this.post.image = null
-    },
+    
     showNewPosts() {
       const updatedPosts = this.hiddenPosts.concat(this.posts);
       this.$store.commit("setHiddenPosts", null);
@@ -296,25 +233,7 @@ export default {
       })
     },
     deletePost(post) {
-      this.$store.dispatch('DELETE_POST', post.id)
-    },
-    detectFiles(e) {
-      let fileList = e.target.files || e.dataTransfer.files;
-      let fileName = fileList[0].name;
-      if (fileName.lastIndexOf('.') <= 0) {
-        this.err_message = "File type is not valid"
-      }
-
-      const fileReader = new FileReader()
-      fileReader.addEventListener('load', () => {
-        this.post.tweetPic = fileReader.result;
-      })
-      fileReader.readAsDataURL(fileList[0])
-      this.post.image = fileList[0]
-
-      // Array.from(Array(fileList.length).keys()).map(x => {
-      //   this.upload(fileList[x]);
-      // });
+      this.$store.dispatch('DELETE_POST', {postId: post.id, userId: this.currentUser.uid, tweetPic: post.tweetPic})
     },
     // upload(file) {
     //   const randomHex = Math.random()
@@ -373,15 +292,7 @@ export default {
 </script>
 
 <style lang="scss">
-.photoButtonWrapper {
-  .fas {
-    color: white;
-  }
-}
-.progressBar {
-  margin: 10px 0;
-  background: #179bb5;
-}
+  @import '../assets/scss/global';
 
 .close__pane {
   display: flex;
@@ -398,19 +309,4 @@ export default {
     }
   }
 }
-
-.profile {
-  .userDisplay {
-    display: flex;
-    align-items: flex-end;
-    margin-bottom: 10px;
-  }
-  .postPhotoContainer {
-      max-height: 40px;
-      max-width: 40px;
-  }
-}
-
-
-
 </style>
