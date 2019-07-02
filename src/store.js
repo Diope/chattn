@@ -230,6 +230,7 @@ export const store = new Vuex.Store({
           if (data.image === null) {
             return;
           }
+
           key = ref.id;
           const filename = data.image.name;
           const ext = filename.slice(filename.lastIndexOf("."));
@@ -241,12 +242,16 @@ export const store = new Vuex.Store({
             .toString(18)
             .slice(2, 4);
 
+          const metaData = {
+            cacheControl: "public,max-age=300"
+          };
+
           return firebase
             .storage()
             .ref(
               userId + "/tweet_images/" + key + "/" + preFix + randomHex + ext
             )
-            .put(data.image);
+            .put(data.image, metaData);
         })
         .then(fileData => {
           if (fileData === undefined) {

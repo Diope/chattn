@@ -159,6 +159,23 @@ section {
     }
 }
 
+.button-clear {
+	@extend .button;
+	background-color: #e6ecf0;
+	color: #14171a;
+	&:hover {
+		background: lighten(#e6ecf0, 5%);
+	}
+    &:disabled {
+		opacity: 0.5;
+		cursor: default;
+
+        &:hover {
+            background: #e6ecf0;
+		}
+	}
+}
+
 .text-center {
 	text-align: center;
 }

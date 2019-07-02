@@ -54,7 +54,7 @@
                         </span>
                       </router-link>
                       <div class="deletePost" v-if="currentUser.uid === post.userId">
-                        <a @click="deletePost(post)">
+                        <a @click="openDeleteConfirmPane(post)">
                           <i class="fas fa-times-circle"></i>
                         </a>
                       </div>
@@ -67,7 +67,7 @@
                     
                   <div v-if="post.tweetPic" class="postImage">
                     <a @click="openImagePanePopup(post)">
-                      <img :src="post.tweetPic" alt>
+                      <img class="lozad" :src="post.tweetPic" alt>
                     </a>
                   </div>
 
@@ -144,6 +144,13 @@
           />
         </div>
 
+        <div v-if="showDeletePopup" class="delete-modal">
+          <DeleteConfirmation 
+            @closePane="closeDeleteConfirmPane"
+            :post="deletePost"
+          />
+        </div>
+
       <!-- end of -->
       </div>   
   </section>
@@ -152,18 +159,20 @@
 <script>
 import { mapState } from "vuex";
 import moment from "moment";
+import lozad from 'lozad';
 
-import AvatarDisplay from './AvatarDisplay'
-import ImagePanePopup from './ImagePanePopup'
+import AvatarDisplay from './AvatarDisplay';
+import ImagePanePopup from './ImagePanePopup';
 import CreatePost from './CreatePost';
-
+import DeleteConfirmation from './DeleteConfirmation';
 
 export default {
   name: `Timeline`, //OMG I just discovered $options.name for easier CSS naming
   components: {
     AvatarDisplay,
     ImagePanePopup,
-    CreatePost
+    CreatePost,
+    DeleteConfirmation
   },
   
   data() {
@@ -176,10 +185,16 @@ export default {
       },
       showCommentPopup: false,
       showImagePanePopup: false,
+      showDeletePopup: false,
       progressUpload: 0,
       postPopup: {},
+      deletePost: {},
       err_message: ""
     };
+  },
+  mounted() {
+    const observer = lozad();
+    observer.observe();
   },
   computed: {
     ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts"])
@@ -232,29 +247,15 @@ export default {
         docId, postId, likes
       })
     },
-    deletePost(post) {
-      this.$store.dispatch('DELETE_POST', {postId: post.id, userId: this.currentUser.uid, tweetPic: post.tweetPic})
+    openDeleteConfirmPane(post) {
+      this.showDeletePopup = true;
+      this.deletePost = post;
+      document.body.style.overflow = 'hidden';
     },
-    // upload(file) {
-    //   const randomHex = Math.random()
-    //     .toString(17)
-    //     .slice(2, 14);
-      
-    //   const preFix = Math.random()
-    //     .toString(18)
-    //     .slice(2,5)
-
-    //   const timeStamp = moment(new Date()).format('YYYY')
-
-    //   this.uploading = true;
-    //   this.uploadTask = fb.storage
-    //     .child(
-    //       `${this.currentUser.uid}` +
-    //         "/tweet_images/" + `${timeStamp}` + "/" +
-    //         `${preFix}${randomHex}`
-    //     )
-    //     .put(file);
-    // }
+    closeDeleteConfirmPane() {
+      this.showDeletePopup = false;
+      document.body.style.overflow = null; //lol omg what cheapness
+    }
   },
   watch: {
     uploadTask: function() {

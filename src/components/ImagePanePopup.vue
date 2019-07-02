@@ -40,7 +40,7 @@ export default {
             z-index: 1000;
             margin: 1rem;
             position: absolute;
-            left: 0px;
+            right: 0px;
             top: 0px;
             background: #1C1C1C;
             border-radius: 50%;
