@@ -55,7 +55,7 @@
                       </router-link>
                       <div class="deletePost" v-if="currentUser.uid === post.userId">
                         <a @click="openDeleteConfirmPane(post)">
-                          <i class="fas fa-times-circle"></i>
+                          <i class="fas fa-times"></i>
                         </a>
                       </div>
                     </div>
@@ -85,6 +85,11 @@
                       <a @click="likePost(post.id, post.likes)">
                         <i class="fas fa-heart"></i>
                         {{post.likes}}
+                      </a>
+                    </li>
+                    <li>
+                      <a @click="bookmarkPost(post)">
+                        <i class="fas fa-bookmark"></i>
                       </a>
                     </li>
                   </ul>
@@ -150,6 +155,9 @@
             :post="deletePost"
           />
         </div>
+        <!-- <div class="book-notification">
+          Bookmark Added
+        </div> -->
 
       <!-- end of -->
       </div>   
@@ -189,7 +197,8 @@ export default {
       progressUpload: 0,
       postPopup: {},
       deletePost: {},
-      err_message: ""
+      err_message: "",
+      book_msg: ""
     };
   },
   mounted() {
@@ -197,7 +206,7 @@ export default {
     observer.observe();
   },
   computed: {
-    ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts"])
+    ...mapState(["userProfile", "currentUser", "posts", "hiddenPosts", "bookmark_msg"])
   },
   methods: {
     
@@ -242,9 +251,15 @@ export default {
         });
     },
     likePost(postId, likes) {
-      const docId = `${this.currentUser.uid}_${postId}`;
+      const userId = this.currentUser.uid;
       this.$store.dispatch('ADD_LIKE', {
-        docId, postId, likes
+        userId, postId, likes
+      })
+    },
+    bookmarkPost(post) {
+      const bookmarkOwnerId = this.currentUser.uid;
+      this.$store.dispatch('ADD_BOOKMARK', {
+        bookmarkOwnerId, post
       })
     },
     openDeleteConfirmPane(post) {

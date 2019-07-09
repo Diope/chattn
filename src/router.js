@@ -8,6 +8,7 @@ import ViewPost from "@/components/ViewPost";
 import Settings from "@/components/Settings";
 import UserProfile from "@/components/UserProfile";
 import PageNotFound from "@/components/PageNotFound";
+import Bookmarks from "@/views/Bookmarks"
 // import Home from "@/components/Home";
 // import SinglePost from "@/components/SinglePost";
 
@@ -46,6 +47,14 @@ const router = new Router({
       path: "/settings",
       name: "Settings",
       component: Settings,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/bookmarks",
+      name: "Bookmarks",
+      component: Bookmarks,
       meta: {
         requiresAuth: true
       }

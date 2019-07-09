@@ -83,10 +83,12 @@ export const store = new Vuex.Store({
     hiddenPosts: [],
     requestedUser: {},
     userPosts: [],
-    singlePostComments: {}
+    singlePostComments: {},
+    bookmark_msg: ""
   },
   getters: {},
   actions: {
+    
     fetchUserProfile({ commit, state }) {
       fb.userCollection
         .doc(state.currentUser.uid)
@@ -263,8 +265,36 @@ export const store = new Vuex.Store({
           });
         });
     },
+    ADD_BOOKMARK: async ({commit, state}, data) => {
+      // post ID and userID
+      console.log(data);
+      const {user, tweetPic, content, createdOn, id} = data.post;
+      const {bookmarkOwnerId} = data;
+      const bookmarkId = `${bookmarkOwnerId}_${id}`;
+
+      fb.bookmarksCollection
+        .doc(bookmarkId)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            state.bookmark_msg ="This chatt has already been bookmarked.";
+            console.log("Already there");
+            return;
+          }
+          fb.bookmarksCollection
+            .doc(bookmarkId)
+            .set({user, bookmarkOwnerId, createdOn, postId: id, tweetPic, content})
+            .then(() => {
+              state.bookmark_msg = "Bookmark successfully added";
+              console.log("New bookmark")
+            })
+        }).catch((err) => {
+          console.log(err)
+        })
+    },
     ADD_LIKE: async ({ commit, state }, data) => {
-      const { docId, postId, likes } = data;
+      const { userId, postId, likes } = data;
+      const docId = `${userId}_${postId}`;
       fb.likesCollection
         .doc(docId)
         .get()

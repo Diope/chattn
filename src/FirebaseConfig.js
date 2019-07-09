@@ -26,6 +26,7 @@ const userCollection = db.collection("users");
 const postCollection = db.collection("posts");
 const likesCollection = db.collection("likes");
 const commentsCollection = db.collection("comments");
+const bookmarksCollection = db.collection("bookmarks");
 
 export {
   db,
@@ -35,5 +36,6 @@ export {
   userCollection,
   postCollection,
   likesCollection,
-  commentsCollection
+  commentsCollection,
+  bookmarksCollection
 };
