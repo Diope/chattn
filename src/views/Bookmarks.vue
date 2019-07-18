@@ -2,16 +2,16 @@
     <section :class="`${$options.name}`">
         <div class="col1">
             <div :class="`${$options.name}__header`">
-                <p>Bookmarks</p>
-                <p>@{{file.handle}}</p>
+                <h5>Bookmarks</h5>
+                <span class="userhandle">@{{userProfile.handle}}</span>
             </div>
             <div class="book-body">
-                <div v-if="this.userBookmarks.length">
+                <div v-if="userBookmarks.length">
                     <div :key="post.id" v-for="post in userBookmarks" class="post">
 
                         <div class="flexWrap">
                             <div class="profilePicWrapper">
-                                <router-link :to="{name: 'file', params: {handle: post.user.handle}}">
+                                <router-link :to="{name: 'UserProfile', params: {handle: post.user.handle}}">
                   
                                     <div v-if="post.user.profilePic !== null" class="profilePhotoContainer">
                                         <img
@@ -32,11 +32,11 @@
                 <div class="postContainer">
                   <div class="postContent">
                     <div class="userDisplay">
-                      <router-link :to="{name: 'file', params: {handle: post.user.handle}}">
+                      <router-link :to="{name: 'UserProfile', params: {handle: post.user.handle}}">
                         <span class="displayName">
                           {{post.user.displayName}}
                           <p>{{'@' + post.user.handle}}</p> ・
-                          <p class="timeAgo">{{post.createdOn | formatDate }}</p>
+                          <p class="timeAgo">{{post.createdOn | FormatDate }}</p>
                         </span>
                       </router-link>
                       <div class="deletePost" v-if="currentUser.uid === post.userId">
@@ -61,7 +61,7 @@
 
                 <div class="bottomButton">
                   <ul>
-                    <li>
+                    <!-- <li>
                       <a @click="addPostCommentPopup(post)">
                         <i class="fas fa-comment"></i>
                         {{post.comments}}
@@ -72,7 +72,7 @@
                         <i class="fas fa-heart"></i>
                         {{post.likes}}
                       </a>
-                    </li>
+                    </li> -->
                     <li>
                       <a @click="bookmarkPost(post.id)">
                         <i class="fas fa-bookmark"></i>
@@ -90,6 +90,9 @@
         </div>
             </div>
         </div>
+        <transition name="fade">
+            <div v-if="uploadEnd" class="success"><p>Profile Picture has been uploaded</p></div>
+        </transition>
     </section>
 </template>
 
@@ -109,22 +112,20 @@ export default {
         this.findUserBookmarks();
     },
     computed: {
-        ...mapState(["currentUser", "file"])
+        ...mapState(["currentUser", "userProfile"])
     },
     methods: {
         findUserBookmarks() {
             let user = this.currentUser.uid;
             fb.bookmarksCollection
-                .where("userId", "==", user)
+                .where("bookmarkOwnerId", "==", user)
                 .get()
                 .then((docs) => {
                     let bookmarkArr = [];
                     docs.forEach((doc) => {
-                        fb.postCollection.doc(doc.id).get().then((doc) => {
-                            const post = doc.data();
-                            post.id = doc.id;
-                            bookmarkArr.push(post)
-                        })
+                        const post = doc.data();
+                        post.id = doc.id;
+                        bookmarkArr.push(post)
                     })
                     this.userBookmarks = bookmarkArr;
                     console.log(bookmarkArr)
@@ -140,11 +141,13 @@ export default {
 .Bookmarks {
     padding-top: 72px;
     &__header {
-        text-align: center;
         background-color: white;
-        padding: 10px 0;
+        padding: 10px 10px;
+        span.userhandle {
+            font-size: 0.8rem;
+        }
 
-        h3 {
+        h5 {
             margin: 0;
         }
     }

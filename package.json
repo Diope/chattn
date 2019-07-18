@@ -1,13 +1,5 @@
 {
   "name": "chattn",
-  "author": "Dion Pettaway",
-  "homepage": "https://github.com/diope/chattn",
-  "description": "A small twitter-esque app. Created as a playground to learn Vue/Vuex",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/diope/chattn.git"
-  },
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,6 +12,7 @@
     "firebase": "6.0.2",
     "lozad": "1.9.0",
     "moment": "2.24.0",
+    "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuelidate": "0.7.4",
@@ -29,6 +22,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-eslint": "^3.0.1",
+    "@vue/cli-plugin-pwa": "3.9.0",
     "@vue/cli-service": "^3.0.1",
     "@vue/eslint-config-prettier": "^4.0.1",
     "babel-eslint": "^10.0.1",
@@ -59,5 +53,13 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "author": "Dion Pettaway",
+  "homepage": "https://github.com/diope/chattn",
+  "description": "A small twitter-esque app. Created as a playground to learn Vue/Vuex",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diope/chattn.git"
+  }
 }

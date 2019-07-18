@@ -6,9 +6,16 @@ import Vuelidate from "vuelidate";
 import { store } from "./store";
 import { sync } from "vuex-router-sync";
 import "./assets/scss/main.scss";
+import moment from "moment";
+import './registerServiceWorker'
 const fb = require("./FirebaseConfig.js");
 
 Vue.config.productionTip = false;
+Vue.filter("FormatDate", function(val) {
+  if (!val) return "";
+  let date = val.toDate();
+  return moment(date).fromNow();
+});
 
 let app;
 Vue.use(Vuelidate);

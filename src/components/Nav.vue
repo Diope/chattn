@@ -43,10 +43,13 @@
 
                             <div :class="`${$options.name}__siteNav`">
                                 <div :class="`${$options.name}__dropDownItem`">
-                                    <a :href="`${userProfile.handle}`" exact><i class="fas fa-user"></i> Profile</a>
+                                    <router-link :to="`${userProfile.handle}`" exact><i class="fas fa-user"></i> Profile</router-link>
                                 </div>
                                 <div :class="`${$options.name}__dropDownItem`">
                                     <router-link to="settings" exact><i class="fas fa-cog"></i> Settings</router-link>
+                                </div>
+                                <div :class="`${$options.name}__dropDownItem`">
+                                    <router-link to="bookmarks" exact><i class="fas fa-bookmark"></i> Bookmarks</router-link>
                                 </div>
                                 <div :class="`${$options.name}__dropDownItem`">
                                     <a @click="logout"><i class="fas fa-sign-out-alt"></i> logout</a>
