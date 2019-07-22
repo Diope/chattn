@@ -25,6 +25,8 @@
 
 > * User auth flow
 > * Create new posts with option to attach an image
+> * Delete posts
+> * Bookmark feature
 > * Modal to see full image
 > * Update account in settings
 > * Upload both profile photo and profile banner, changes are propagated through all posts and comments
@@ -32,11 +34,16 @@
 > * Likes
 > * User Profile page (displays: handle, display name, profile pic, birthday, location, list of all posts made by a particular user)
 
+
 > TODO:
 
 > * Followers/Following
-> * Delete a post
 > * Make an account private
+> * Large refactoring of various components
+
+> Notes:
+
+Having worked on this for a while, there are quite a few things I realize I need to do. There is heavy code reuse in some places which I need to address, and to break more things out into their own components. I also need to make some of the methods global as they're being used a lot (ex: delete pane), I've already moved my filters to global. A lot needs to be done but the progress is nice. I feel much more productive with Vue than React but I do still find myself doing things the React way in lieu of not really knowing how to do them the Vue way.
 
 ### 🏠 [Homepage](https://github.com/diope/chattn)
 
@@ -44,6 +51,7 @@
 
 ```sh
 yarn install
+yarn serve
 ```
 
 ## Author

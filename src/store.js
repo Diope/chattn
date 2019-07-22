@@ -88,7 +88,6 @@ export const store = new Vuex.Store({
   },
   getters: {},
   actions: {
-    
     fetchUserProfile({ commit, state }) {
       fb.userCollection
         .doc(state.currentUser.uid)
@@ -265,32 +264,81 @@ export const store = new Vuex.Store({
           });
         });
     },
-    ADD_BOOKMARK: async ({commit, state}, data) => {
+    ADD_BOOKMARK: async ({ commit, state }, data) => {
       // post ID and userID
       console.log(data);
-      const {user, tweetPic, content, createdOn, id} = data.post;
-      const {bookmarkOwnerId} = data;
-      const bookmarkId = `${bookmarkOwnerId}_${id}`;
+      const { user, tweetPic, content, createdOn, id, userId } = data.post;
+      const { bookmarkOwnerId } = data;
+      const postId = `${id}`;
 
-      fb.bookmarksCollection
-        .doc(bookmarkId)
+      fb.userCollection
+        .doc(bookmarkOwnerId)
+        .collection("bookmarks")
+        .doc(postId)
         .get()
         .then(doc => {
           if (doc.exists) {
-            state.bookmark_msg ="This chatt has already been bookmarked.";
+            state.bookmark_msg = "This chatt has already been bookmarked.";
             console.log("Already there");
             return;
           }
-          fb.bookmarksCollection
-            .doc(bookmarkId)
-            .set({user, bookmarkOwnerId, createdOn, postId: id, tweetPic, content})
+          fb.userCollection
+            .doc(bookmarkOwnerId)
+            .collection("bookmarks")
+            .doc(postId)
+            .set({
+              userId,
+              user,
+              createdOn,
+              postId,
+              tweetPic,
+              content
+            })
             .then(() => {
               state.bookmark_msg = "Bookmark successfully added";
-              console.log("New bookmark")
-            })
-        }).catch((err) => {
-          console.log(err)
+              console.log("New bookmark");
+            });
         })
+        .catch(err => {
+          console.log(err);
+        });
+
+      // fb.bookmarksCollection
+      //   .doc(bookmarkId)
+      //   .get()
+      //   .then(doc => {
+      //     if (doc.exists) {
+      //       state.bookmark_msg = "This chatt has already been bookmarked.";
+      //       console.log("Already there");
+      //       return;
+      //     }
+      //     fb.bookmarksCollection
+      //       .doc(bookmarkId)
+      //       .set({user, bookmarkOwnerId, createdOn, postId: id, tweetPic, content})
+      //       .then(() => {
+      //         state.bookmark_msg = "Bookmark successfully added";
+      //         console.log("New bookmark");
+      //       })
+      //   }).catch((err) => {
+      //     console.log(err)
+      //   })
+    },
+    REMOVE_BOOKMARK: async ({ commit, state }, data) => {
+      const { id } = data.post;
+      const { bookmarkOwnerId } = data;
+
+      fb.userCollection
+        .doc(bookmarkOwnerId)
+        .collection("bookmarks")
+        .doc(id)
+        .delete()
+        .then(() => {
+          state.bookmark_msg = "Bookmark has been removed";
+          console.log("removed");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     ADD_LIKE: async ({ commit, state }, data) => {
       const { userId, postId, likes } = data;

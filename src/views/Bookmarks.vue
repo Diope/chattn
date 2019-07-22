@@ -39,11 +39,11 @@
                           <p class="timeAgo">{{post.createdOn | FormatDate }}</p>
                         </span>
                       </router-link>
-                      <div class="deletePost" v-if="currentUser.uid === post.userId">
+                      <!-- <div class="deletePost" v-if="currentUser.uid === post.userId">
                         <a @click="openDeleteConfirmPane(post)">
                           <i class="fas fa-times"></i>
                         </a>
-                      </div>
+                      </div> -->
                     </div>
                     <router-link :to="{name: 'ViewPost', params: {handle: `${post.user.handle}`, postId: `${post.id}`}}" style="">
                         <div class="postText">{{post.content}}</div>
@@ -74,7 +74,7 @@
                       </a>
                     </li> -->
                     <li>
-                      <a @click="bookmarkPost(post.id)">
+                      <a @click="removeBookmark(post)">
                         <i class="fas fa-bookmark"></i>
                       </a>
                     </li>
@@ -90,9 +90,6 @@
         </div>
             </div>
         </div>
-        <transition name="fade">
-            <div v-if="uploadEnd" class="success"><p>Profile Picture has been uploaded</p></div>
-        </transition>
     </section>
 </template>
 
@@ -111,27 +108,52 @@ export default {
     created() {
         this.findUserBookmarks();
     },
+    watch: {
+
+    },
     computed: {
         ...mapState(["currentUser", "userProfile"])
     },
     methods: {
         findUserBookmarks() {
             let user = this.currentUser.uid;
-            fb.bookmarksCollection
-                .where("bookmarkOwnerId", "==", user)
+            fb.userCollection
+                .doc(user)
+                .collection("bookmarks")
                 .get()
                 .then((docs) => {
                     let bookmarkArr = [];
+                    // let sortedBooks = bookmarkArr.sort((a, b) => {
+                    //   const dateHigh = a.createdOn
+                    //   const dateLow = b.createdOn
+
+                    //   let comparison = 0;
+                    //   if (dateHigh > dateLow) {
+                    //     comparison = 1;
+                    //   } else if (dateHigh < dateLow) {
+                    //     comparison = -1;
+                    //   }
+                    //   return comparison;
+                    // })
                     docs.forEach((doc) => {
                         const post = doc.data();
                         post.id = doc.id;
                         bookmarkArr.push(post)
                     })
-                    this.userBookmarks = bookmarkArr;
-                    console.log(bookmarkArr)
+                    this.userBookmarks = bookmarkArr.reverse();
+                    console.log("bookmark function clog", bookmarkArr)
                 }).catch((err) => {
                     console.log(err)
                 })
+        },
+        removeBookmark(post){
+          const bookmarkOwnerId = this.currentUser.uid;
+          const postId = post.id;
+          this.$store.dispatch("REMOVE_BOOKMARK", {post, bookmarkOwnerId})
+          const hela = this.userBookmarks.filter((bookmarks) => {
+            return bookmarks.postId !== postId;
+          })
+          this.userBookmarks = hela; // Mutating the original array...I feel this is a TERRIBLE idea. But for the time being it works. 
         }
     }
 }
