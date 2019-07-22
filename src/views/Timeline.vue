@@ -169,10 +169,10 @@ import { mapState } from "vuex";
 import moment from "moment";
 import lozad from 'lozad';
 
-import AvatarDisplay from './AvatarDisplay';
-import ImagePanePopup from './ImagePanePopup';
-import CreatePost from './CreatePost';
-import DeleteConfirmation from './DeleteConfirmation';
+import AvatarDisplay from '../components/AvatarDisplay';
+import ImagePanePopup from '../components/ImagePanePopup';
+import CreatePost from '../components/CreatePost';
+import DeleteConfirmation from '../components/DeleteConfirmation';
 
 export default {
   name: `Timeline`, //OMG I just discovered $options.name for easier CSS naming

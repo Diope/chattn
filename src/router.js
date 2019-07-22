@@ -2,13 +2,13 @@ import Vue from "vue";
 import Router from "vue-router";
 import firebase from "firebase";
 
-import Timeline from "@/components/Timeline";
+import Timeline from "./views/Timeline";
 import Login from "@/components/Login";
-import ViewPost from "@/components/ViewPost";
-import Settings from "@/components/Settings";
-import UserProfile from "@/components/UserProfile";
-import PageNotFound from "@/components/PageNotFound";
-import Bookmarks from "@/views/Bookmarks"
+import ViewPost from "./views/ViewPost";
+import Settings from "./views/Settings";
+import UserProfile from "./views/UserProfile";
+import PageNotFound from "./views/PageNotFound";
+import Bookmarks from "./views/Bookmarks";
 // import Home from "@/components/Home";
 // import SinglePost from "@/components/SinglePost";
 

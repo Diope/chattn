@@ -127,7 +127,7 @@
 import {mapState} from 'vuex'
 import {url, maxLength, minLength, required} from 'vuelidate/lib/validators'
 import { setTimeout } from 'timers';
-import ProfileBanner from './ProfileBanner'
+import ProfileBanner from '../components/ProfileBanner'
 const fb = require('../FirebaseConfig');
 
 export default {
