@@ -84,7 +84,7 @@ export const store = new Vuex.Store({
     requestedUser: {},
     userPosts: [],
     singlePostComments: {},
-    bookmark_msg: ""
+    bookmark_msg: "Bookmark Added!"
   },
   getters: {},
   actions: {
