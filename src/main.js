@@ -7,13 +7,14 @@ import { store } from "./store";
 import { sync } from "vuex-router-sync";
 import "./assets/scss/main.scss";
 import moment from "moment";
-import './registerServiceWorker'
+import './registerServiceWorker';
 const fb = require("./FirebaseConfig.js");
 
 Vue.config.productionTip = false;
+
 Vue.filter("FormatDate", function(val) {
   if (!val) return "";
-  let date = val.toDate();
+  let date = moment(val).toDate();
   return moment(date).fromNow();
 });
 
